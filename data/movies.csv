@@ -1,0 +1,21 @@
+movie_id,title,genres
+1,Inception,Action|Sci-Fi|Thriller
+2,Interstellar,Adventure|Drama|Sci-Fi
+3,The Matrix,Action|Sci-Fi
+4,The Dark Knight,Action|Crime|Drama
+5,Arrival,Drama|Mystery|Sci-Fi
+6,Avatar,Action|Adventure|Sci-Fi
+7,The Prestige,Drama|Mystery|Thriller
+8,Blade Runner 2049,Drama|Sci-Fi|Thriller
+9,Guardians of the Galaxy,Action|Adventure|Sci-Fi
+10,Shutter Island,Mystery|Thriller
+11,Mad Max: Fury Road,Action|Adventure|Sci-Fi
+12,The Shawshank Redemption,Drama
+13,Pulp Fiction,Crime|Drama
+14,The Godfather,Crime|Drama
+15,Whiplash,Drama|Music
+16,The Lord of the Rings: The Fellowship of the Ring,Adventure|Fantasy
+17,The Social Network,Biography|Drama
+18,Parasite,Comedy|Drama|Thriller
+19,Dune,Adventure|Drama|Sci-Fi
+20,Spider-Man: Into the Spider-Verse,Action|Animation|Adventure
