@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="movie-detail py-5" style="background-image: linear-gradient(90deg, rgba(0,0,0,.9), rgba(0,0,0,.45)), url('{{ movie.image_url }}');">
+  <div class="container-fluid px-4 px-lg-5">
+    <div class="row align-items-center g-4">
+      <div class="col-md-4 col-lg-3">
+        <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid rounded shadow-lg">
+      </div>
+      <div class="col-md-8 col-lg-7">
+        <h1>{{ movie.title }}</h1>
+        <p class="genres">{{ movie.genres.replace('|', ' • ') }}</p>
+        <p class="description">{{ movie.description }}</p>
+
+        <form method="post" action="{{ url_for('rate_movies') }}" class="detail-rate">
+          <input type="hidden" name="movie_id" value="{{ movie.movie_id }}">
+          <div class="star-rating mb-3">
+            {% for value in [5,4,3,2,1] %}
+            <input id="detail-star{{ value }}-{{ movie.movie_id }}" type="radio" name="rating" value="{{ value }}" {% if user_rating and user_rating|int == value %}checked{% endif %} required>
+            <label for="detail-star{{ value }}-{{ movie.movie_id }}" title="{{ value }} stars">★</label>
+            {% endfor %}
+          </div>
+          <button class="btn btn-danger px-4">Save Star Rating</button>
+        </form>
+
+        {% if user_rating %}
+        <p class="mt-3 text-light">Your current rating: <strong>{{ user_rating }}/5</strong></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

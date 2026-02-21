@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="container-fluid px-4 px-lg-5 py-5">
+  <h1 class="section-title">Rate Movies With Stars</h1>
+  <p class="section-sub">Pick your rating and we will refine your recommendations.</p>
+
+  <div class="row g-4">
+    {% for movie in movies %}
+    <div class="col-md-6 col-lg-4 col-xl-3">
+      <div class="rate-card">
+        <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid rounded mb-3">
+        <h5>{{ movie.title }}</h5>
+        <p class="text-secondary mb-3">{{ movie.genres.replace('|', ', ') }}</p>
+        <form method="post">
+          <input type="hidden" name="movie_id" value="{{ movie.movie_id }}">
+          <div class="star-rating mb-3">
+            {% for value in [5,4,3,2,1] %}
+            <input id="star{{ value }}-{{ movie.movie_id }}" type="radio" name="rating" value="{{ value }}" required>
+            <label for="star{{ value }}-{{ movie.movie_id }}" title="{{ value }} stars">★</label>
+            {% endfor %}
+          </div>
+          <button class="btn btn-danger w-100">Save Rating</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

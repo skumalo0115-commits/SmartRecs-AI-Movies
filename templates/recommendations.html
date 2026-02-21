@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="container-fluid px-4 px-lg-5 py-5">
+  <h1 class="section-title">Top 10 Movies For You</h1>
+  <p class="section-sub">Based on Your Preferences</p>
+  <div class="row g-4">
+    {% for movie in recommendations %}
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+      <a href="{{ url_for('movie_detail', movie_id=movie.movie_id) }}" class="poster-card">
+        <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid">
+        <div class="poster-info">
+          <h5>{{ movie.title }}</h5>
+          <p>{{ movie.genres.replace('|', ', ') }}</p>
+          <small>Score {{ '%.2f'|format(movie.score) }}</small>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-hero d-flex align-items-center justify-content-center">
+  <div class="auth-overlay"></div>
+  <div class="auth-content text-center">
+    <h1>Unlimited Movie Picks, Tailored For You</h1>
+    <p>Sign in or create an account to unlock your personalized SmartRecs experience.</p>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <a href="{{ url_for('index', mode='login') }}" class="btn btn-danger btn-lg px-5">Login</a>
+      <a href="{{ url_for('index', mode='register') }}" class="btn btn-outline-light btn-lg px-5">Register</a>
+    </div>
+  </div>
+
+  <div class="auth-modal {% if auth_mode in ['login', 'register'] %}show{% endif %}">
+    <div class="auth-panel">
+      <a class="close-auth" href="{{ url_for('index') }}"><i class="bi bi-x-lg"></i></a>
+      <div class="auth-switch mb-4">
+        <a class="auth-tab {% if auth_mode != 'register' %}active{% endif %}" href="{{ url_for('index', mode='login') }}">Login</a>
+        <a class="auth-tab {% if auth_mode == 'register' %}active{% endif %}" href="{{ url_for('index', mode='register') }}">Register</a>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      {% if auth_mode == 'register' %}
+      <form method="post" action="{{ url_for('register') }}">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <button class="btn btn-danger w-100">Create Account</button>
+      </form>
+      {% else %}
+      <form method="post" action="{{ url_for('login') }}">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input name="username" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <button class="btn btn-danger w-100">Sign In</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

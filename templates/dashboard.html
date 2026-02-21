@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero-netflix mb-5" style="background-image: linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.35)), url('{{ trending[0].image_url }}');">
+  <div class="container-fluid px-4 px-lg-5 hero-inner">
+    <span class="badge rounded-pill bg-danger mb-3">SmartRecs Featured</span>
+    <h1>Welcome to SmartRecs</h1>
+    <p>Get Personalized Movie Recommendations Powered by AI</p>
+    <a href="{{ url_for('rate_movies') }}" class="btn btn-danger btn-lg px-4">Rate Movies Now</a>
+  </div>
+</section>
+
+<section class="container-fluid px-4 px-lg-5 mb-5">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="metric-card card-blue">
+        <span>Movies Rated</span>
+        <h3>{{ rating_count }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="metric-card card-green">
+        <span>Top Genre</span>
+        <h3>{{ top_genre }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="metric-card card-orange">
+        <span>Your Recommendation Score</span>
+        <h3>{{ score_pct }}%</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container-fluid px-4 px-lg-5 mb-5">
+  <h2 class="section-title">Top 10 Movies For You</h2>
+  <p class="section-sub">Based on Your Preferences</p>
+  <div class="row g-4">
+    {% for movie in recommendations %}
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+      <a href="{{ url_for('movie_detail', movie_id=movie.movie_id) }}" class="poster-card">
+        <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid">
+        <div class="poster-info">
+          <h5>{{ movie.title }}</h5>
+          <p>{{ movie.genres.replace('|', ', ') }}</p>
+          <small>Score {{ '%.2f'|format(movie.score) }}</small>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container-fluid px-4 px-lg-5 pb-5">
+  <h2 class="section-title">Trending Catalog</h2>
+  <div class="row g-4">
+    {% for movie in trending %}
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+      <a href="{{ url_for('movie_detail', movie_id=movie.movie_id) }}" class="poster-card mini">
+        <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="img-fluid">
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+movie_id,title,genres,description,image_url
+1,Inception,Action|Sci-Fi|Thriller,"A skilled thief enters dreams to steal secrets and gets one final chance at redemption through an impossible inception mission.",https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg
+2,Interstellar,Adventure|Drama|Sci-Fi,"Explorers travel through a wormhole in space to save humanity as Earth becomes uninhabitable.",https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg
+3,The Matrix,Action|Sci-Fi,"A hacker discovers reality is a simulation and joins a rebellion against intelligent machines.",https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg
+4,The Dark Knight,Action|Crime|Drama,"Batman faces the Joker, a criminal mastermind who pushes Gotham into chaos.",https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg
+5,Arrival,Drama|Mystery|Sci-Fi,"A linguist is recruited to communicate with mysterious aliens before global conflict erupts.",https://image.tmdb.org/t/p/w500/x2FJsf1ElAgr63Y3PNPtJrcmpoe.jpg
+6,Avatar,Action|Adventure|Sci-Fi,"A former marine on Pandora must choose between military orders and protecting an alien world.",https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg
+7,The Prestige,Drama|Mystery|Thriller,"Two rival magicians obsess over creating the ultimate illusion, leading to dangerous consequences.",https://image.tmdb.org/t/p/w500/bdN3gXuIZYaJP7ftKK2sU0nPtEA.jpg
+8,Blade Runner 2049,Drama|Sci-Fi|Thriller,"A young blade runner discovers a secret that leads him to track down Rick Deckard.",https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg
+9,Guardians of the Galaxy,Action|Adventure|Sci-Fi,"A band of unlikely heroes must protect a powerful orb from a fanatical warlord.",https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg
+10,Shutter Island,Mystery|Thriller,"A U.S. Marshal investigates a psychiatric facility where nothing is as it seems.",https://image.tmdb.org/t/p/w500/4GDy0PHYX3VRXUtwK5ysFbg3kEx.jpg
+11,Mad Max: Fury Road,Action|Adventure|Sci-Fi,"In a post-apocalyptic wasteland, Max allies with Furiosa in a high-octane escape.",https://image.tmdb.org/t/p/w500/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg
+12,The Shawshank Redemption,Drama,"Two imprisoned men bond over decades, finding solace and hope through acts of decency.",https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg
+13,Pulp Fiction,Crime|Drama,"The lives of hitmen, a boxer, and criminals intertwine in a stylish crime narrative.",https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg
+14,The Godfather,Crime|Drama,"The aging patriarch transfers control of his crime empire to his reluctant son.",https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg
+15,Whiplash,Drama|Music,"An ambitious drummer pushes himself under a ruthless instructor at a music conservatory.",https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg
+16,The Lord of the Rings: The Fellowship of the Ring,Adventure|Fantasy,"A young hobbit begins a perilous journey to destroy a powerful ring.",https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg
+17,The Social Network,Biography|Drama,"The rise of Facebook sparks ambition, lawsuits, and fractured friendships.",https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg
+18,Parasite,Comedy|Drama|Thriller,"A poor family schemes to become employed by a wealthy household with shocking consequences.",https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg
+19,Dune,Adventure|Drama|Sci-Fi,"A gifted young heir must survive political betrayal and a desert planet's deadly challenges.",https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg
+20,Spider-Man: Into the Spider-Verse,Action|Animation|Adventure,"Teen Miles Morales becomes Spider-Man and teams with heroes from multiple dimensions.",https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg
