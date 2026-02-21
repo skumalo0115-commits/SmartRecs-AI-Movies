@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+import re
 
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, session, url_for
@@ -15,6 +16,25 @@ app.config["SECRET_KEY"] = "change-this-in-production"
 init_db()
 recommender = SmartRecommender()
 movies_df = pd.read_csv("data/movies.csv")
+
+
+def movie_with_details(movie: dict) -> dict:
+    movie_copy = dict(movie)
+    title = movie_copy.get("title", "")
+    year_match = re.search(r"\((\d{4})\)\s*$", title)
+    movie_copy["year"] = year_match.group(1) if year_match else "Unknown"
+    movie_copy["clean_title"] = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
+    genres = movie_copy.get("genres", "")
+    genre_list = [g for g in genres.split("|") if g]
+    movie_copy["genre_list"] = genre_list
+    primary = genre_list[0] if genre_list else "cinematic"
+    movie_copy["description"] = (
+        f"{movie_copy['clean_title']} is a {primary.lower()} story released in {movie_copy['year']}. "
+        f"Genres: {', '.join(genre_list) if genre_list else 'Not listed'}."
+    )
+    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
+    movie_copy["poster_url"] = f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
+    return movie_copy
 
 
 def current_user_id() -> int | None:
@@ -42,7 +62,7 @@ def register():
         password = request.form["password"]
         if len(password) < 8:
             flash("Password must be at least 8 characters.", "danger")
-            return render_template("register.html")
+            return render_template("register.html", auth_mode="register")
 
         password_hash = generate_password_hash(password)
         try:
@@ -52,7 +72,8 @@ def register():
         except Exception:
             flash("Username already exists.", "danger")
 
-    return render_template("register.html")
+    mode = request.args.get("mode") or ("register" if request.method == "POST" else None)
+    return render_template("register.html", auth_mode=mode)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -69,7 +90,8 @@ def login():
 
         flash("Invalid credentials.", "danger")
 
-    return render_template("login.html")
+    mode = request.args.get("mode") or ("login" if request.method == "POST" else None)
+    return render_template("login.html", auth_mode=mode)
 
 
 @app.route("/logout")
@@ -116,7 +138,7 @@ def dashboard():
 def get_recommendations(user_id: int):
     app_ratings = load_app_ratings()
     recs = recommender.recommend(user_id, app_ratings, top_n=10)
-    return recs.to_dict(orient="records")
+    return [movie_with_details(movie) for movie in recs.to_dict(orient="records")]
 
 
 @app.route("/rate", methods=["GET", "POST"])
@@ -142,7 +164,8 @@ def rate_movies():
 
     rated_ids = {r["movie_id"] for r in fetch_all("SELECT movie_id FROM user_ratings WHERE user_id = ?", (user_id,))}
     unrated = movies_df[~movies_df["movie_id"].isin(rated_ids)].to_dict(orient="records")
-    return render_template("rate.html", movies=unrated, active_tab="rate")
+    detailed_movies = [movie_with_details(movie) for movie in unrated]
+    return render_template("rate.html", movies=detailed_movies, active_tab="rate")
 
 
 @app.route("/recommendations")
