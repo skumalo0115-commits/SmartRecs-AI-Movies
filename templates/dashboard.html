@@ -1,66 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="hero-section text-center text-white d-flex align-items-center justify-content-center">
-  <div class="hero-content">
-    <h1 class="display-3 fw-bold">Welcome to SmartRecs</h1>
-    <p class="lead mb-4">Get Personalized Movie Recommendations Powered by AI</p>
-    <a href="{{ url_for('rate_movies') }}" class="btn hero-btn btn-lg">Rate Movies Now</a>
-  </div>
-</section>
-
-<section class="stats-wrap py-5">
+<section class="netflix-hero">
   <div class="container">
-    <div class="row g-4 justify-content-center">
-      <div class="col-md-4">
-        <div class="stat-card stat-blue">
-          <div>
-            <i class="bi bi-film fs-1"></i>
-          </div>
-          <div>
-            <h3>Movies Rated</h3>
-            <p class="stat-value">{{ rating_count }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stat-card stat-green">
-          <div>
-            <i class="bi bi-star-fill fs-1"></i>
-          </div>
-          <div>
-            <h3>Top Genre</h3>
-            <p class="stat-value fs-2">{{ top_genre }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stat-card stat-orange">
-          <div>
-            <i class="bi bi-speedometer2 fs-1"></i>
-          </div>
-          <div>
-            <h3>Your Recommendation Score</h3>
-            <p class="stat-value">{{ score_pct }}%</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
+    <p>Your movie night dashboard with AI-personalized picks.</p>
+    <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
   </div>
 </section>
 
 <section class="container py-4">
-  <h2 class="fw-bold">Top 10 Movies For You</h2>
-  <p class="text-muted fs-3">Based on Your Preferences</p>
-  <ol class="list-group list-group-numbered recommendations-list">
-    {% for movie in recommendations %}
-      <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-        <div>
-          <a class="movie-title" href="#">{{ movie.title }}</a>
-          <span> ({{ movie.genres.replace('|', ', ') }}) </span>
-        </div>
-        <span class="fw-bold">Score: {{ '%.2f'|format(movie.score) }}</span>
-      </li>
-    {% endfor %}
-  </ol>
+  <div class="row g-3">
+    <div class="col-md-4"><div class="nf-stat"><span>Movies Rated</span><strong>{{ rating_count }}</strong></div></div>
+    <div class="col-md-4"><div class="nf-stat"><span>Top Genre</span><strong>{{ top_genre }}</strong></div></div>
+    <div class="col-md-4"><div class="nf-stat"><span>Match Score</span><strong>{{ score_pct }}%</strong></div></div>
+  </div>
 </section>
+
+<section class="container pb-5">
+  <h2 class="row-title">Top Picks For You</h2>
+  <div class="movie-row">
+    {% for movie in recommendations %}
+    <article class="movie-card">
+      <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster">
+      <div class="movie-info">
+        <h5>{{ movie.clean_title }}</h5>
+        <p>{{ movie.genres.replace('|', ', ') }}</p>
+        <button class="btn btn-sm netflix-btn" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Details</button>
+      </div>
+    </article>
+
+    <div class="modal fade" id="movieModal{{ movie.movie_id }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content netflix-modal">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Release date:</strong> {{ movie.release_date }}</p>
+            <p>{{ movie.description }}</p>
+            <p class="text-danger fw-bold">AI Score: {{ '%.2f'|format(movie.score) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+<footer class="site-footer dashboard-footer mt-5">
+  <div class="container py-4">
+    <h4 class="footer-title mb-3">Let’s Connect</h4>
+    <div class="social-icon-row">
+      <a href="https://github.com/skumalo0115-commits" target="_blank" class="social-pill" aria-label="GitHub"><i class="bi bi-github"></i><span>GitHub</span></a>
+      <a href="https://sbahle-kumalo-emerging-technologies.base44.app/" target="_blank" class="social-pill" aria-label="Portfolio"><i class="bi bi-globe2"></i><span>Portfolio</span></a>
+      <a href="https://www.facebook.com/share/1DL66XnWr5/?mibextid=wwXIfr" target="_blank" class="social-pill" aria-label="Facebook"><i class="bi bi-facebook"></i><span>Facebook</span></a>
+      <a href="https://wa.me/27827744933" target="_blank" class="social-pill" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i><span>WhatsApp</span></a>
+      <a href="https://www.linkedin.com/in/sbahle-kumalo-b4b498267/" target="_blank" class="social-pill" aria-label="LinkedIn"><i class="bi bi-linkedin"></i><span>LinkedIn</span></a>
+    </div>
+  </div>
+</footer>
 {% endblock %}
