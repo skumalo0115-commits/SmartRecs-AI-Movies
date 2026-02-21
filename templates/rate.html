@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="container py-5">
+  <h1 class="mb-4">Rate Movies</h1>
+  <div class="row g-4">
+    {% for movie in movies %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <p class="text-muted">{{ movie.genres.replace('|', ', ') }}</p>
+          <form method="post" class="d-flex gap-2">
+            <input type="hidden" name="movie_id" value="{{ movie.movie_id }}">
+            <select class="form-select" name="rating" required>
+              <option value="">Rate</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+            <button class="btn btn-primary">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
