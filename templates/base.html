@@ -104,6 +104,17 @@
     }, { threshold: 0.12 });
 
     revealTargets.forEach((el) => observer.observe(el));
+
+
+    document.querySelectorAll('.modal').forEach((modalEl) => {
+      modalEl.addEventListener('hidden.bs.modal', () => {
+        modalEl.querySelectorAll('iframe.trailer-iframe').forEach((frame) => {
+          const originalSrc = frame.dataset.src || frame.src;
+          frame.src = '';
+          requestAnimationFrame(() => { frame.src = originalSrc; });
+        });
+      });
+    });
   </script>
 </body>
 </html>

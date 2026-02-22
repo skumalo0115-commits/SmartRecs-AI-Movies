@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="container py-5">
+  <form method="get" class="movie-filter-form">
+    <div class="filter-field">
+      <label for="listSearch" class="visually-hidden">Search titles</label>
+      <input id="listSearch" type="text" name="search" value="{{ search }}" class="form-control netflix-input" placeholder="Search movie title">
+    </div>
+    <div class="filter-field filter-small">
+      <label for="listYear" class="visually-hidden">Filter year</label>
+      <input id="listYear" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" name="year" value="{{ year }}" class="form-control netflix-input" placeholder="Year">
+    </div>
+    <div class="filter-field">
+      <label for="listGenre" class="visually-hidden">Filter genre</label>
+      <input id="listGenre" type="text" name="genre" value="{{ genre }}" class="form-control netflix-input" placeholder="Genre">
+    </div>
+    <button class="btn netflix-btn" type="submit">Filter</button>
+    <a class="btn btn-outline-light" href="{{ url_for('recommendations') }}">Reset</a>
+  </form>
+
   <h1 class="row-title">Recommended For You</h1>
   <div class="movie-grid">
     {% for movie in recommendations %}
@@ -22,20 +39,20 @@
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content netflix-modal">
           <div class="modal-header border-0">
-            <h5 class="modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
+            <h5 class="modal-title cool-modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
 
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
-            <p class="movie-description"><strong>Description:</strong> {{ movie.description }}</p>
+            <p class="movie-description cool-description"><strong>Description:</strong> {{ movie.description }}</p>
 
             {% if movie.trailer_embed_url %}
             <div class="trailer-wrap mt-3">
               <h6>Watch Trailer</h6>
               <div class="ratio ratio-16x9 trailer-frame">
-                <iframe src="{{ movie.trailer_embed_url }}" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe src="{{ movie.trailer_embed_url }}" data-src="{{ movie.trailer_embed_url }}" class="trailer-iframe" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               </div>
             </div>
             {% endif %}
