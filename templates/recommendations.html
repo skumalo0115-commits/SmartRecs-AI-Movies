@@ -8,9 +8,11 @@
       <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster">
       <div class="movie-info">
         <h5>{{ movie.clean_title }}</h5>
-        <p>{{ movie.genres.replace('|', ', ') }}</p>
+        <p>{{ movie.pretty_genres }}</p>
         <p class="score-chip">Match {{ '%.2f'|format(movie.score) }}</p>
-        <button class="btn btn-sm netflix-btn" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Details</button>
+        <div class="movie-actions">
+          <button class="btn btn-sm netflix-btn" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Details</button>
+        </div>
       </div>
     </article>
 
@@ -23,7 +25,12 @@
           </div>
           <div class="modal-body">
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
+
+            <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
+            <p><strong>Description:</strong> {{ movie.description }}</p>
+
             <p>{{ movie.description }}</p>
+
             {% if movie.trailer_embed_url %}
             <div class="trailer-wrap mt-3">
               <h6>Watch Trailer</h6>
