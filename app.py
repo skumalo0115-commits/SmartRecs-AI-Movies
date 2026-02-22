@@ -6,7 +6,7 @@ import os
 import re
 from collections import Counter
 from functools import lru_cache
-from urllib.parse import urlencode
+from urllib.parse import quote_plus, urlencode
 from urllib.request import urlopen
 
 import os
@@ -16,7 +16,7 @@ from collections import Counter
 
 import pandas as pd
 import json
-from urllib.parse import urlencode
+from urllib.parse import quote_plus, urlencode
 from urllib.request import urlopen
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -49,6 +49,26 @@ POSTER_MAP = {
     "whiplash": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
     "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
     "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    "the grand budapest hotel": "https://image.tmdb.org/t/p/w500/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+    "her": "https://image.tmdb.org/t/p/w500/eCOtqtfvn7mxGl6nfmq4b1exJRc.jpg",
+    "la la land": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+    "the lion king": "https://image.tmdb.org/t/p/w500/2bXbqYdUdNVa8VIWXVfclP2ICtT.jpg",
+    "gladiator": "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg",
+    "the silence of the lambs": "https://image.tmdb.org/t/p/w500/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg",
+    "toy story": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+    "se7en": "https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EngEmJskVUO.jpg",
+    "the truman show": "https://image.tmdb.org/t/p/w500/vuza0WqY239yBXOadKlGwJsZJFE.jpg",
+    "the departed": "https://image.tmdb.org/t/p/w500/nT97ifVT2J1yMQmeq20Qblg61T.jpg",
+    "black panther": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+    "coco": "https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg",
+    "ford v ferrari": "https://image.tmdb.org/t/p/w500/dR1Ju50iudrOh3YgfwkAU1g2HZe.jpg",
+    "knives out": "https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg",
+    "the martian": "https://image.tmdb.org/t/p/w500/5aGhaIHYuQbqlHWvWYqMCnj40y2.jpg",
+    "no country for old men": "https://image.tmdb.org/t/p/w500/6d5XOczc226jECq0LIX0siKtgHR.jpg",
+    "the imitation game": "https://image.tmdb.org/t/p/w500/zSqJ1qFq8NXFfi7JeIYMlzyR0dx.jpg",
+    "inside out": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
+    "a quiet place": "https://image.tmdb.org/t/p/w500/nAU74GmpUk7t5iklEp3bufwDq4n.jpg",
+    "everything everywhere all at once": "https://image.tmdb.org/t/p/w500/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
 }
 
 
@@ -209,16 +229,20 @@ def movie_with_details(movie: dict) -> dict:
     )
 
     trailer_id = TRAILER_MAP.get(lower_title)
-
+    fallback_query = quote_plus(f"{clean_title} official trailer")
 
     movie_copy["clean_title"] = clean_title
     movie_copy["year"] = resolved_year
     movie_copy["release_date"] = release_date
     movie_copy["description"] = description
     movie_copy["pretty_genres"] = pretty_genres
-    movie_copy["poster_url"] = poster_url
+    movie_copy["poster_url"] = poster_url or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
 
-    movie_copy["trailer_embed_url"] = f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else None
+    movie_copy["trailer_embed_url"] = (
+        f"https://www.youtube.com/embed/{trailer_id}"
+        if trailer_id
+        else f"https://www.youtube.com/embed?listType=search&list={fallback_query}"
+    )
     return movie_copy
 
 
