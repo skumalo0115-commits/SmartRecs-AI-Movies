@@ -4,7 +4,7 @@
   <h1 class="row-title mb-4">Rate Movies</h1>
   <div class="movie-grid">
     {% for movie in movies[:60] %}
-    <article class="movie-card">
+    <article class="movie-card movie-card-rate">
       <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster" loading="lazy" decoding="async">
       <div class="movie-info">
         <h5>{{ movie.clean_title }}</h5>
@@ -13,7 +13,7 @@
           <button class="btn btn-sm netflix-btn btn-outline" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Description</button>
         </div>
 
-        <form method="post" class="star-form mt-2">
+        <form method="post" class="star-form">
           <input type="hidden" name="movie_id" value="{{ movie.movie_id }}">
           <div class="star-action-row">
             <div class="rating-stars">

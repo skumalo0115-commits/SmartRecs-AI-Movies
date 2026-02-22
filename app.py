@@ -9,9 +9,6 @@ from urllib.parse import quote_plus, urlencode
 from urllib.request import urlopen
 
 import pandas as pd
-import json
-from urllib.parse import quote_plus, urlencode
-from urllib.request import urlopen
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -44,10 +41,14 @@ POSTER_MAP = {
     "the godfather": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
     "whiplash": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
     "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
+    "parasite": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "dune": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+    "spider-man: into the spider-verse": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "the grand budapest hotel": "https://image.tmdb.org/t/p/w500/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
     "her": "https://image.tmdb.org/t/p/w500/eCOtqtfvn7mxGl6nfmq4b1exJRc.jpg",
     "la la land": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
-    "the lion king": "https://image.tmdb.org/t/p/w500/2bXbqYdUdNVa8VIWXVfclP2ICtT.jpg",
+    "the lion king": "https://image.tmdb.org/t/p/w500/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg",
     "gladiator": "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg",
     "the silence of the lambs": "https://image.tmdb.org/t/p/w500/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg",
     "toy story": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
@@ -58,7 +59,7 @@ POSTER_MAP = {
     "coco": "https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg",
     "ford v ferrari": "https://image.tmdb.org/t/p/w500/dR1Ju50iudrOh3YgfwkAU1g2HZe.jpg",
     "knives out": "https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg",
-    "the martian": "https://image.tmdb.org/t/p/w500/5aGhaIHYuQbqlHWvWYqMCnj40y2.jpg",
+    "the martian": "https://image.tmdb.org/t/p/w500/9aXfG5q3xw8fA3U0WYm6M4Q6z4P.jpg",
     "no country for old men": "https://image.tmdb.org/t/p/w500/6d5XOczc226jECq0LIX0siKtgHR.jpg",
     "the imitation game": "https://image.tmdb.org/t/p/w500/zSqJ1qFq8NXFfi7JeIYMlzyR0dx.jpg",
     "inside out": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
@@ -133,7 +134,7 @@ TRAILER_MAP = {
     "the grand budapest hotel": "1Fg5iWmQjwk",
     "her": "WzV6mXIOVl4",
     "la la land": "0pdqf4P9MB8",
-    "the lion king": "lFzVJEksoDY",
+    "the lion king": "4sj1MT05lAA",
     "gladiator": "owK1qxDselE",
     "the silence of the lambs": "W6Mm8Sbe__o",
     "toy story": "v-PjgYDrg70",
@@ -152,6 +153,48 @@ TRAILER_MAP = {
     "everything everywhere all at once": "wxN1T1uxQ2g",
 }
 
+EXACT_DESCRIPTIONS = {
+    "inception": "A thief who steals corporate secrets through dream-sharing technology is tasked with planting an idea into a CEO's mind.",
+    "interstellar": "In a dying future Earth, a team of explorers travels through a wormhole in search of a new home for humanity.",
+    "the matrix": "A hacker discovers reality is a simulation and joins a rebellion fighting the machines controlling humanity.",
+    "the dark knight": "Batman faces the Joker, an anarchic criminal mastermind who pushes Gotham toward chaos.",
+    "arrival": "A linguist is recruited to communicate with mysterious aliens whose arrival could change humanity's future.",
+    "avatar": "A marine on Pandora is torn between following orders and protecting the Na'vi people he comes to love.",
+    "the prestige": "Two rival magicians in Victorian London become obsessed with outdoing each other at any cost.",
+    "blade runner 2049": "A new blade runner uncovers a secret that leads him to track down former blade runner Rick Deckard.",
+    "guardians of the galaxy": "A band of misfits teams up to stop a powerful villain and unexpectedly becomes heroes.",
+    "shutter island": "A U.S. Marshal investigating a disappearance at a remote asylum uncovers disturbing truths.",
+    "mad max: fury road": "In a post-apocalyptic wasteland, Max joins Furiosa in a high-octane escape from a tyrant.",
+    "the shawshank redemption": "An imprisoned banker forms an enduring friendship and quietly plans a path to freedom.",
+    "pulp fiction": "Interwoven stories of crime in Los Angeles follow hitmen, a boxer, and desperate thieves.",
+    "the godfather": "The aging patriarch of a crime dynasty hands power to his reluctant son, Michael Corleone.",
+    "whiplash": "A driven jazz drummer is pushed to his limits by a ruthless and demanding music instructor.",
+    "the lord of the rings: the fellowship of the ring": "A hobbit and a fellowship begin a perilous quest to destroy a powerful ring.",
+    "the social network": "The rise of Facebook sparks legal battles and fractured friendships around founder Mark Zuckerberg.",
+    "parasite": "A poor family infiltrates a wealthy household, setting off a darkly comic chain of events.",
+    "dune": "Paul Atreides arrives on Arrakis and is drawn into a battle over destiny, power, and survival.",
+    "spider-man: into the spider-verse": "Teen Miles Morales becomes Spider-Man and joins spider-heroes from other dimensions.",
+    "the grand budapest hotel": "A legendary concierge and his lobby boy become entangled in a stolen painting and family fortune.",
+    "her": "A lonely writer falls in love with an advanced operating system designed to evolve emotionally.",
+    "la la land": "An aspiring actress and a jazz musician fall in love while chasing their dreams in Los Angeles.",
+    "the lion king": "After tragedy strikes, a lion cub must embrace his destiny as king of the Pride Lands.",
+    "gladiator": "A betrayed Roman general becomes a gladiator and seeks vengeance against a corrupt emperor.",
+    "the silence of the lambs": "An FBI trainee seeks help from imprisoned killer Hannibal Lecter to catch another serial murderer.",
+    "toy story": "A cowboy doll's world is shaken when a flashy new space ranger becomes his owner's favorite toy.",
+    "se7en": "Two detectives hunt a serial killer whose crimes are inspired by the seven deadly sins.",
+    "the truman show": "A man slowly realizes his entire life is a television show broadcast to the world.",
+    "the departed": "An undercover cop and a mole in the police race to expose each other in Boston's crime war.",
+    "black panther": "T'Challa returns to Wakanda to rule as king while facing threats to his nation and legacy.",
+    "coco": "A young boy journeys to the Land of the Dead to uncover his family's musical past.",
+    "ford v ferrari": "Designer Carroll Shelby and driver Ken Miles build a race car to challenge Ferrari at Le Mans.",
+    "knives out": "Detective Benoit Blanc investigates the suspicious death of a wealthy mystery novelist.",
+    "the martian": "Stranded on Mars, astronaut Mark Watney fights to survive while NASA works to bring him home.",
+    "no country for old men": "Violence erupts after a hunter finds drug money and is pursued by a relentless hitman.",
+    "the imitation game": "Alan Turing leads efforts to crack Nazi Enigma codes during World War II.",
+    "inside out": "A young girl's emotions navigate upheaval after her family moves to a new city.",
+    "a quiet place": "A family must live in silence to avoid deadly creatures that hunt by sound.",
+    "everything everywhere all at once": "A laundromat owner is pulled into a multiverse-spanning battle tied to family and identity.",
+}
 
 DEFAULT_DESCRIPTIONS = {
     row["title"].lower(): f"{row['title']} is a {row['genres'].replace('|', ', ')} film with memorable performances and storytelling."
@@ -213,7 +256,8 @@ def movie_with_details(movie: dict) -> dict:
         release_date = f"01 Jan {resolved_year}"
 
     plot = omdb.get("Plot")
-    description = plot if plot and plot != "N/A" else DEFAULT_DESCRIPTIONS.get(lower_title, f"Description: {clean_title}")
+    description = plot if plot and plot != "N/A" else EXACT_DESCRIPTIONS.get(lower_title, DEFAULT_DESCRIPTIONS.get(lower_title, clean_title))
+    description = re.sub(r"\b(.+?)\s+\1\b", r"\1", description, flags=re.IGNORECASE)
 
     movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
     poster_url = (
@@ -377,10 +421,20 @@ def dashboard():
     )
 
 
-def get_recommendations(user_id: int):
+def _ratings_signature(user_id: int) -> str:
+    rows = fetch_all("SELECT movie_id, rating FROM user_ratings WHERE user_id = ? ORDER BY movie_id", (user_id,))
+    return "|".join(f"{r['movie_id']}:{r['rating']}" for r in rows)
+
+
+@lru_cache(maxsize=256)
+def _cached_recommendations(user_id: int, signature: str):
     app_ratings = load_app_ratings()
     recs = recommender.recommend(user_id, app_ratings, top_n=12)
     return [movie_with_details(movie) for movie in recs.to_dict(orient="records")]
+
+
+def get_recommendations(user_id: int):
+    return _cached_recommendations(user_id, _ratings_signature(user_id))
 
 
 @app.route("/rate", methods=["GET", "POST"])
@@ -401,6 +455,7 @@ def rate_movies():
             """,
             (user_id, movie_id, rating),
         )
+        _cached_recommendations.cache_clear()
         flash("Rating saved successfully!", "success")
         return redirect(url_for("rate_movies"))
 

@@ -335,3 +335,46 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   from { opacity: 0; transform: translateY(28px) scale(.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* UX polish updates */
+.netflix-hero {
+  min-height: 84vh;
+  padding: 8.5rem 0 6.5rem;
+}
+.hero-intro-block {
+  min-height: 70vh;
+}
+.hero-stats .nf-stat {
+  border: 1px solid rgba(255, 255, 255, .18);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
+}
+.stat-float {
+  animation: statFloat 3.4s ease-in-out infinite;
+}
+@keyframes statFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.movie-card-rate .movie-info {
+  min-height: 0;
+}
+.movie-card-rate .movie-actions {
+  margin-top: .25rem;
+}
+.movie-card-rate .star-form {
+  margin-top: .4rem;
+}
+.movie-card-rate .star-action-row {
+  gap: .2rem;
+}
+
+.reveal-item {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
