@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="auth-screen">
+
+  <div class="auth-content container auth-enter">
+
   <div class="auth-overlay"></div>
   <div class="auth-content container">
+
     <h1 class="auth-logo">SmartRecs</h1>
     <p class="auth-tagline">Your next favorite movie is one click away.</p>
 
     <div class="auth-actions {% if auth_mode %}auth-actions-hidden{% endif %}">
+
+      <button class="btn netflix-btn auth-shift" data-open-auth="login">Login</button>
+      <button class="btn netflix-btn btn-outline auth-shift" data-open-auth="register">Register</button>
+
       <button class="btn netflix-btn" data-open-auth="login">Login</button>
       <button class="btn netflix-btn btn-outline" data-open-auth="register">Register</button>
+
     </div>
 
     <div class="auth-form-wrap {% if auth_mode %}show{% endif %}" id="authFormWrap">
@@ -21,6 +30,13 @@
             <input name="username" class="form-control netflix-input" required>
           </div>
           <div class="mb-3">
+
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control netflix-input" placeholder="name@email.com">
+          </div>
+          <div class="mb-3">
+
+
             <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control netflix-input" required>
           </div>
@@ -48,7 +64,14 @@
   document.querySelectorAll('[data-open-auth]').forEach((button) => {
     button.addEventListener('click', () => {
       const mode = button.getAttribute('data-open-auth');
+
+      document.querySelector('.auth-content')?.classList.add('auth-leave');
+      setTimeout(() => {
+        window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
+      }, 300);
+
       window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
+
     });
   });
 </script>
