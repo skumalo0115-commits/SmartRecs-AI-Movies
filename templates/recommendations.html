@@ -29,7 +29,7 @@
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
 
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
-            <p><strong>Description:</strong> {{ movie.description }}</p>
+            <p class="movie-description"><strong>Description:</strong> {{ movie.description }}</p>
 
             {% if movie.trailer_embed_url %}
             <div class="trailer-wrap mt-3">
