@@ -15,20 +15,24 @@
     </article>
 
     <div class="modal fade" id="movieModal{{ movie.movie_id }}" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content netflix-modal">
           <div class="modal-header border-0">
             <h5 class="modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
-          
           <div class="modal-body">
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
             <p>{{ movie.description }}</p>
+            {% if movie.trailer_embed_url %}
+            <div class="trailer-wrap mt-3">
+              <h6>Watch Trailer</h6>
+              <div class="ratio ratio-16x9 trailer-frame">
+                <iframe src="{{ movie.trailer_embed_url }}" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              </div>
+            </div>
+            {% endif %}
           </div>
-
-          <div class="modal-body"><p>{{ movie.description }}</p></div>
-
         </div>
       </div>
     </div>

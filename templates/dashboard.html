@@ -4,11 +4,7 @@
   <div class="container">
     <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
     <p>Your movie night dashboard with AI-personalized picks.</p>
-
     <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
-
-    <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn">Rate Movies</a>
-
   </div>
 </section>
 
@@ -34,18 +30,24 @@
     </article>
 
     <div class="modal fade" id="movieModal{{ movie.movie_id }}" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content netflix-modal">
           <div class="modal-header border-0">
             <h5 class="modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
-
             <p>{{ movie.description }}</p>
             <p class="text-danger fw-bold">AI Score: {{ '%.2f'|format(movie.score) }}</p>
+            {% if movie.trailer_embed_url %}
+            <div class="trailer-wrap mt-3">
+              <h6>Watch Trailer</h6>
+              <div class="ratio ratio-16x9 trailer-frame">
+                <iframe src="{{ movie.trailer_embed_url }}" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -53,14 +55,13 @@
     {% endfor %}
   </div>
 </section>
-
 {% endblock %}
 
 {% block footer %}
 <footer class="site-footer dashboard-footer mt-5">
-  <div class="container py-4">
-    <h4 class="footer-title mb-3">Let’s Connect</h4>
-    <div class="social-icon-row">
+  <div class="container py-5">
+    <h4 class="footer-title text-center mb-4">Let’s Connect</h4>
+    <div class="social-icon-row justify-content-center">
       <a href="https://github.com/skumalo0115-commits" target="_blank" class="social-pill" aria-label="GitHub"><i class="bi bi-github"></i><span>GitHub</span></a>
       <a href="https://sbahle-kumalo-emerging-technologies.base44.app/" target="_blank" class="social-pill" aria-label="Portfolio"><i class="bi bi-globe2"></i><span>Portfolio</span></a>
       <a href="https://www.facebook.com/share/1DL66XnWr5/?mibextid=wwXIfr" target="_blank" class="social-pill" aria-label="Facebook"><i class="bi bi-facebook"></i><span>Facebook</span></a>
@@ -69,5 +70,4 @@
     </div>
   </div>
 </footer>
-
 {% endblock %}
