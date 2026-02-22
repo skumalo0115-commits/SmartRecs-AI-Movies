@@ -31,7 +31,7 @@ POSTER_MAP = {
     "the dark knight": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
     "arrival": "https://image.tmdb.org/t/p/w500/x2FJsf1ElAgr63Y3PNPtJrcmpoe.jpg",
     "avatar": "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg",
-    "the prestige": "https://image.tmdb.org/t/p/w500/bdN3gXuIZYaJP7ftKK2sU0nPtEA.jpg",
+    "the prestige": "https://image.tmdb.org/t/p/w500/5MXyQfz8xUP3dIFPTubhTsbFY6N.jpg",
     "blade runner 2049": "https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
     "guardians of the galaxy": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
     "shutter island": "https://image.tmdb.org/t/p/w500/4GDy0PHYX3VRXUtwK5ysFbg3kEx.jpg",
@@ -285,6 +285,28 @@ def movie_with_details(movie: dict) -> dict:
     return movie_copy
 
 
+
+
+def filter_movies(movies: list[dict], query: str, year: str, genre: str) -> list[dict]:
+    search = (query or "").strip().lower()
+    year_filter = (year or "").strip()
+    genre_filter = (genre or "").strip().lower()
+
+    def matches(movie: dict) -> bool:
+        title = str(movie.get("clean_title") or movie.get("title") or "").lower()
+        movie_year = str(movie.get("year") or "")
+        movie_genres = str(movie.get("pretty_genres") or movie.get("genres") or "").replace("|", ",").lower()
+
+        if search and search not in title:
+            return False
+        if year_filter and year_filter != movie_year:
+            return False
+        if genre_filter and genre_filter not in movie_genres:
+            return False
+        return True
+
+    return [movie for movie in movies if matches(movie)]
+
 def current_user_id() -> int | None:
     return session.get("user_id")
 
@@ -316,8 +338,13 @@ def register():
         password_hash = generate_password_hash(password)
         try:
             execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password_hash))
-            flash("Registration successful. Please log in.", "success")
-            return redirect(url_for("login"))
+            user = fetch_one("SELECT id, username, email FROM users WHERE username = ?", (username,))
+            if user:
+                session["user_id"] = user["id"]
+                session["username"] = user["username"]
+                session["email"] = user["email"]
+            flash("Registration successful. Welcome to SmartRecs!", "success")
+            return redirect(url_for("dashboard"))
         except Exception:
             flash("Username already exists.", "danger")
 
@@ -459,10 +486,15 @@ def rate_movies():
         flash("Rating saved successfully!", "success")
         return redirect(url_for("rate_movies"))
 
+    search = request.args.get("search", "")
+    year = request.args.get("year", "")
+    genre = request.args.get("genre", "")
+
     rated_ids = {r["movie_id"] for r in fetch_all("SELECT movie_id FROM user_ratings WHERE user_id = ?", (user_id,))}
     unrated = movies_df[~movies_df["movie_id"].isin(rated_ids)].to_dict(orient="records")
     detailed_movies = [movie_with_details(movie) for movie in unrated]
-    return render_template("rate.html", movies=detailed_movies, active_tab="rate")
+    filtered_movies = filter_movies(detailed_movies, search, year, genre)
+    return render_template("rate.html", movies=filtered_movies, active_tab="rate", search=search, year=year, genre=genre)
 
 
 @app.route("/recommendations")
@@ -471,7 +503,21 @@ def recommendations():
     if not user_id:
         return redirect(url_for("login"))
 
-    return render_template("recommendations.html", recommendations=get_recommendations(user_id), active_tab="recommendations")
+    search = request.args.get("search", "")
+    year = request.args.get("year", "")
+    genre = request.args.get("genre", "")
+
+    recommendations_list = get_recommendations(user_id)
+    filtered_recommendations = filter_movies(recommendations_list, search, year, genre)
+
+    return render_template(
+        "recommendations.html",
+        recommendations=filtered_recommendations,
+        active_tab="recommendations",
+        search=search,
+        year=year,
+        genre=genre,
+    )
 
 
 if __name__ == "__main__":

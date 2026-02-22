@@ -401,6 +401,143 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 }
 
 .movie-description {
-  text-align: center;
+  text-align: left;
   line-height: 1.6;
+  color: inherit;
+  margin-bottom: 1rem;
+}
+.netflix-modal .modal-body p strong {
+  color: #ff4a58;
+  font-weight: 800;
+}
+
+/* refinement updates */
+.netflix-hero {
+  padding: 4.5rem 0 2.75rem;
+  min-height: 56vh;
+}
+.hero-intro-block {
+  min-height: 44vh;
+}
+.hero-intro-block h1 {
+  margin-top: .4rem;
+}
+.hero-stats {
+  margin-top: 1.6rem !important;
+}
+
+.movie-filter-form {
+  width: min(980px, 100%);
+  margin: 0 auto 1.2rem;
+  padding: .9rem;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 14px;
+  background: rgba(17,20,32,.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .65rem;
+  flex-wrap: wrap;
+}
+.filter-field {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+.filter-small {
+  flex: 0 1 130px;
+  min-width: 110px;
+}
+.movie-filter-form .netflix-input::placeholder {
+  color: #c8ceda;
+  opacity: 1;
+}
+
+.movie-grid,
+.movie-row {
+  align-items: stretch;
+}
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.movie-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.movie-meta {
+  min-height: 96px;
+}
+.star-form {
+  margin-top: auto;
+}
+.star-action-row {
+  margin-top: .55rem;
+}
+
+.cool-modal-title {
+  width: 100%;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: .55px;
+  color: #ff5169;
+  text-shadow: 0 0 10px rgba(229,9,20,.45), 0 0 20px rgba(229,9,20,.28);
+}
+
+@media (max-width: 768px) {
+  .movie-filter-form {
+    padding: .75rem;
+  }
+}
+
+/* latest UI refinements */
+.netflix-hero {
+  min-height: 48vh;
+  padding: 3.1rem 0 1.45rem;
+}
+.hero-intro-block {
+  min-height: 35vh;
+}
+.hero-stats {
+  margin-top: 1rem !important;
+}
+
+/* placeholder tones */
+.netflix-input::placeholder {
+  color: #bcc3cf;
+  opacity: 1;
+}
+.movie-filter-form .netflix-input::placeholder {
+  color: #6c7484;
+}
+
+/* modal metadata row consistency */
+.netflix-modal .modal-body p {
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: .55rem;
+  text-align: left;
+}
+.movie-description {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: left;
+  line-height: 1.55;
+  margin-bottom: .65rem;
+}
+.cool-modal-title {
+  color: #ff4f65;
+  text-shadow: 0 0 12px rgba(229,9,20,.5), 0 0 24px rgba(229,9,20,.35);
+}
+
+/* remove stray spacing under card actions/buttons */
+.movie-card .movie-actions,
+.movie-card .star-form {
+  margin-bottom: 0;
+}
+.movie-card .star-action-row,
+.movie-card .movie-actions .btn,
+.movie-card .star-action-row .btn {
+  margin-bottom: 0;
 }
