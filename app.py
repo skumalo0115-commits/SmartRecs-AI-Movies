@@ -1,23 +1,14 @@
 from __future__ import annotations
 
-
 import json
 import os
 import re
 from collections import Counter
 from functools import lru_cache
-from urllib.parse import urlencode
+from urllib.parse import quote_plus, urlencode
 from urllib.request import urlopen
-
-import os
-import re
-from collections import Counter
-
 
 import pandas as pd
-import json
-from urllib.parse import urlencode
-from urllib.request import urlopen
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -31,39 +22,92 @@ init_db()
 recommender = SmartRecommender()
 movies_df = pd.read_csv("data/movies.csv")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
-
-OMDB_API_KEY = os.getenv("OMDB_API_KEY", "thewdb")
-
+OMDB_API_KEY = os.getenv("OMDB_API_KEY")
 
 POSTER_MAP = {
     "inception": "https://image.tmdb.org/t/p/w500/8IB2e4r4oVhHnANbnm7O3Tj6tF8.jpg",
     "interstellar": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
     "the matrix": "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
     "the dark knight": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-    "dune": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+    "arrival": "https://image.tmdb.org/t/p/w500/x2FJsf1ElAgr63Y3PNPtJrcmpoe.jpg",
+    "avatar": "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg",
+    "the prestige": "https://image.tmdb.org/t/p/w500/5MXyQfz8xUP3dIFPTubhTsbFY6N.jpg",
+    "blade runner 2049": "https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
+    "guardians of the galaxy": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
+    "shutter island": "https://image.tmdb.org/t/p/w500/4GDy0PHYX3VRXUtwK5ysFbg3kEx.jpg",
     "mad max: fury road": "https://image.tmdb.org/t/p/w500/hA2ple9q4qnwxp3hKVNhroipsir.jpg",
-    "parasite": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "the shawshank redemption": "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
     "pulp fiction": "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
     "the godfather": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
-    "spider-man: into the spider-verse": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "whiplash": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
-    "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
     "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
+    "parasite": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "dune": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+    "spider-man: into the spider-verse": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "the grand budapest hotel": "https://image.tmdb.org/t/p/w500/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
+    "her": "https://image.tmdb.org/t/p/w500/eCOtqtfvn7mxGl6nfmq4b1exJRc.jpg",
+    "la la land": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
+    "the lion king": "https://image.tmdb.org/t/p/w500/2bXbqYdUdNVa8VIWXVfclP2ICtT.jpg",
+    "gladiator": "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg",
+    "the silence of the lambs": "https://image.tmdb.org/t/p/w500/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg",
+    "toy story": "https://image.tmdb.org/t/p/w500/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+    "se7en": "https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EngEmJskVUO.jpg",
+    "the truman show": "https://image.tmdb.org/t/p/w500/vuza0WqY239yBXOadKlGwJsZJFE.jpg",
+    "the departed": "https://image.tmdb.org/t/p/w500/nT97ifVT2J1yMQmeq20Qblg61T.jpg",
+    "black panther": "https://image.tmdb.org/t/p/w500/uxzzxijgPIY7slzFvMotPv8wjKA.jpg",
+    "coco": "https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg",
+    "ford v ferrari": "https://image.tmdb.org/t/p/w500/dR1Ju50iudrOh3YgfwkAU1g2HZe.jpg",
+    "knives out": "https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg",
+    "the martian": "https://m.media-amazon.com/images/M/MV5BMTU0NzI1Nzg2Nl5BMl5BanBnXkFtZTgwNTE5MTU0NjE@._V1_SX500.jpg",
+    "no country for old men": "https://image.tmdb.org/t/p/w500/6d5XOczc226jECq0LIX0siKtgHR.jpg",
+    "the imitation game": "https://image.tmdb.org/t/p/w500/zSqJ1qFq8NXFfi7JeIYMlzyR0dx.jpg",
+    "inside out": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
+    "a quiet place": "https://image.tmdb.org/t/p/w500/nAU74GmpUk7t5iklEp3bufwDq4n.jpg",
+    "everything everywhere all at once": "https://image.tmdb.org/t/p/w500/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
 }
 
-
 YEAR_MAP = {
-    "interstellar": "2014",
     "inception": "2010",
-    "dune": "2021",
+    "interstellar": "2014",
+    "the matrix": "1999",
+    "the dark knight": "2008",
+    "arrival": "2016",
+    "avatar": "2009",
+    "the prestige": "2006",
+    "blade runner 2049": "2017",
+    "guardians of the galaxy": "2014",
+    "shutter island": "2010",
     "mad max: fury road": "2015",
-    "parasite": "2019",
+    "the shawshank redemption": "1994",
     "pulp fiction": "1994",
     "the godfather": "1972",
-    "spider-man: into the spider-verse": "2018",
     "whiplash": "2014",
-    "the social network": "2010",
     "the lord of the rings: the fellowship of the ring": "2001",
+    "the social network": "2010",
+    "parasite": "2019",
+    "dune": "2021",
+    "spider-man: into the spider-verse": "2018",
+    "the grand budapest hotel": "2014",
+    "her": "2013",
+    "la la land": "2016",
+    "the lion king": "1994",
+    "gladiator": "2000",
+    "the silence of the lambs": "1991",
+    "toy story": "1995",
+    "se7en": "1995",
+    "the truman show": "1998",
+    "the departed": "2006",
+    "black panther": "2018",
+    "coco": "2017",
+    "ford v ferrari": "2019",
+    "knives out": "2019",
+    "the martian": "2015",
+    "no country for old men": "2007",
+    "the imitation game": "2014",
+    "inside out": "2015",
+    "a quiet place": "2018",
+    "everything everywhere all at once": "2022",
 }
 
 TRAILER_MAP = {
@@ -71,15 +115,52 @@ TRAILER_MAP = {
     "interstellar": "zSWdZVtXT7E",
     "the matrix": "vKQi3bBA1y8",
     "the dark knight": "EXeTwQWrcwY",
-    "dune": "n9xhJrPXop4",
+    "arrival": "tFMo3UJ4B4g",
+    "avatar": "5PSNL1qE6VY",
+    "the prestige": "RLtaA9fFNXU",
+    "blade runner 2049": "gCcx85zbxz4",
+    "guardians of the galaxy": "d96cjJhvlMA",
+    "shutter island": "5iaYLCiq5RM",
     "mad max: fury road": "hEJnMQG9ev8",
-    "parasite": "5xH0HfJHsaY",
+    "the shawshank redemption": "PLl99DlL6b4",
     "pulp fiction": "s7EdQ4FqbhY",
-    "the godfather": "sY1S34973zA",
+    "the godfather": "UaVTIH8mujA",
+    "whiplash": "7d_jQycdQGo",
+    "the lord of the rings: the fellowship of the ring": "V75dMMIW2B4",
+    "the social network": "lB95KLmpLR4",
+    "parasite": "5xH0HfJHsaY",
+    "dune": "n9xhJrPXop4",
+    "spider-man: into the spider-verse": "g4Hbz2jLxvQ",
+    "the grand budapest hotel": "1Fg5iWmQjwk",
+    "her": "WzV6mXIOVl4",
+    "la la land": "0pdqf4P9MB8",
+    "the lion king": "lFzVJEksoDY",
+    "gladiator": "owK1qxDselE",
+    "the silence of the lambs": "W6Mm8Sbe__o",
+    "toy story": "v-PjgYDrg70",
+    "se7en": "znmZoVkCjpI",
+    "the truman show": "dlnmQbPGuls",
+    "the departed": "iojhqm0JTW4",
+    "black panther": "xjDjIWPwcPU",
+    "coco": "Rvr68u6k5sI",
+    "ford v ferrari": "zyYgDtY2AMY",
+    "knives out": "qGqiHJTsRkQ",
+    "the martian": "ej3ioOneTy8",
+    "no country for old men": "38A__WT3-o0",
+    "the imitation game": "nuPZUUED5uk",
+    "inside out": "seMwpP0yeu4",
+    "a quiet place": "WR7cc5t7tv8",
+    "everything everywhere all at once": "wxN1T1uxQ2g",
 }
 
 
-def _safe_json_get(url: str, timeout: float = 3.5) -> dict:
+DEFAULT_DESCRIPTIONS = {
+    row["title"].lower(): f"{row['title']} is a {row['genres'].replace('|', ', ')} film with memorable performances and storytelling."
+    for _, row in movies_df.iterrows()
+}
+
+
+def _safe_json_get(url: str, timeout: float = 1.2) -> dict:
     try:
         with urlopen(url, timeout=timeout) as response:
             return json.loads(response.read().decode("utf-8"))
@@ -95,9 +176,7 @@ def omdb_movie_data(clean_title: str, year: str | None) -> dict:
     if year and year.isdigit():
         params["y"] = year
     data = _safe_json_get(f"https://www.omdbapi.com/?{urlencode(params)}")
-    if data.get("Response") == "True":
-        return data
-    return {}
+    return data if data.get("Response") == "True" else {}
 
 
 @lru_cache(maxsize=1200)
@@ -114,102 +193,39 @@ def tmdb_poster_url(clean_title: str, year: str) -> str | None:
     path = results[0].get("poster_path")
     return f"https://image.tmdb.org/t/p/w500{path}" if path else None
 
-TRAILER_MAP = {
-    "inception": "YoHD9XEInc0",
-    "interstellar": "zSWdZVtXT7E",
-    "the matrix": "vKQi3bBA1y8",
-    "the dark knight": "EXeTwQWrcwY",
-    "dune": "n9xhJrPXop4",
-    "mad max: fury road": "hEJnMQG9ev8",
-    "parasite": "5xH0HfJHsaY",
-    "pulp fiction": "s7EdQ4FqbhY",
-    "the godfather": "sY1S34973zA",
-}
-
-
-def tmdb_poster_url(clean_title: str, year: str) -> str | None:
-    if not TMDB_API_KEY:
-        return None
-    try:
-        params = {"api_key": TMDB_API_KEY, "query": clean_title}
-        if year.isdigit():
-            params["year"] = year
-        url = f"https://api.themoviedb.org/3/search/movie?{urlencode(params)}"
-        with urlopen(url, timeout=3) as response:
-            data = json.loads(response.read().decode("utf-8"))
-        results = data.get("results", [])
-        if not results:
-            return None
-        path = results[0].get("poster_path")
-        return f"https://image.tmdb.org/t/p/w500{path}" if path else None
-    except Exception:
-        return None
-
-
 
 def movie_with_details(movie: dict) -> dict:
     movie_copy = dict(movie)
-
     raw_title = movie_copy.get("title", "")
     year_match = re.search(r"\((\d{4})\)\s*$", raw_title)
     parsed_year = year_match.group(1) if year_match else None
     clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", raw_title).strip()
-
     lower_title = clean_title.lower()
-    omdb = omdb_movie_data(clean_title, parsed_year)
 
-    resolved_year = parsed_year or YEAR_MAP.get(lower_title)
-    if not resolved_year:
-        omdb_year_match = re.search(r"\d{4}", omdb.get("Year", ""))
-        resolved_year = omdb_year_match.group(0) if omdb_year_match else "2000"
+    resolved_year = parsed_year or YEAR_MAP.get(lower_title, "2000")
+    omdb = omdb_movie_data(clean_title, resolved_year)
 
-    genre_from_dataset = movie_copy.get("genres", "")
-    genre_list = [g for g in genre_from_dataset.split("|") if g]
+    genres = movie_copy.get("genres", "")
+    genre_list = [g for g in genres.split("|") if g]
     pretty_genres = omdb.get("Genre") or ", ".join(genre_list) or "Genre unavailable"
 
-    released = omdb.get("Released")
-    release_date = released if released and released != "N/A" else f"01 Jan {resolved_year}"
+    release_date = omdb.get("Released")
+    if not release_date or release_date == "N/A":
+        release_date = f"01 Jan {resolved_year}"
+
     plot = omdb.get("Plot")
-    description = (
-        plot
-        if plot and plot != "N/A"
-        else f"{clean_title} delivers a compelling cinematic journey with strong performances and memorable storytelling."
-    )
+    description = plot if plot and plot != "N/A" else DEFAULT_DESCRIPTIONS.get(lower_title, f"Description: {clean_title}")
 
     movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
     poster_url = (
         POSTER_MAP.get(lower_title)
         or (omdb.get("Poster") if omdb.get("Poster") and omdb.get("Poster") != "N/A" else None)
         or tmdb_poster_url(clean_title, resolved_year)
-    )
-
-    title = movie_copy.get("title", "")
-    year_match = re.search(r"\((\d{4})\)\s*$", title)
-    year = year_match.group(1) if year_match else "Unknown"
-    clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
-    genres = movie_copy.get("genres", "")
-    genre_list = [g for g in genres.split("|") if g]
-
-    movie_copy["year"] = year
-    movie_copy["clean_title"] = clean_title
-    movie_copy["genre_list"] = genre_list
-    movie_copy["release_date"] = f"01 Jan {year}" if year != "Unknown" else "Release date unavailable"
-    movie_copy["description"] = (
-        f"{clean_title} is a {genre_list[0].lower() if genre_list else 'cinematic'} story"
-        f" with themes across {', '.join(genre_list) if genre_list else 'multiple genres'}."
-    )
-
-    lower_title = clean_title.lower()
-    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
-    movie_copy["poster_url"] = (
-        POSTER_MAP.get(lower_title)
-        or tmdb_poster_url(clean_title, year)
-
         or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
     )
 
     trailer_id = TRAILER_MAP.get(lower_title)
-
+    fallback_query = quote_plus(f"{clean_title} official trailer")
 
     movie_copy["clean_title"] = clean_title
     movie_copy["year"] = resolved_year
@@ -217,8 +233,9 @@ def movie_with_details(movie: dict) -> dict:
     movie_copy["description"] = description
     movie_copy["pretty_genres"] = pretty_genres
     movie_copy["poster_url"] = poster_url
-
-    movie_copy["trailer_embed_url"] = f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else None
+    movie_copy["trailer_embed_url"] = (
+        f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else f"https://www.youtube.com/embed?listType=search&list={fallback_query}"
+    )
     return movie_copy
 
 

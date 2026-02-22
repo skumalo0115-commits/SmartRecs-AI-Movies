@@ -5,10 +5,12 @@
   <div class="movie-grid">
     {% for movie in recommendations %}
     <article class="movie-card">
-      <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster">
+      <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster" loading="lazy" decoding="async">
       <div class="movie-info">
-        <h5>{{ movie.clean_title }}</h5>
-        <p>{{ movie.pretty_genres }}</p>
+        <div class="movie-meta">
+          <h5>{{ movie.clean_title }}</h5>
+          <p>{{ movie.pretty_genres }}</p>
+        </div>
         <p class="score-chip">Match {{ '%.2f'|format(movie.score) }}</p>
         <div class="movie-actions">
           <button class="btn btn-sm netflix-btn" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Details</button>
@@ -28,8 +30,6 @@
 
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
             <p><strong>Description:</strong> {{ movie.description }}</p>
-
-            <p>{{ movie.description }}</p>
 
             {% if movie.trailer_embed_url %}
             <div class="trailer-wrap mt-3">
