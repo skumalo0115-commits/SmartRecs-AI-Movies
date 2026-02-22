@@ -4,7 +4,11 @@
   <div class="container">
     <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
     <p>Your movie night dashboard with AI-personalized picks.</p>
+
     <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
+
+    <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn">Rate Movies</a>
+
   </div>
 </section>
 
@@ -37,7 +41,9 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
+
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
+
             <p>{{ movie.description }}</p>
             <p class="text-danger fw-bold">AI Score: {{ '%.2f'|format(movie.score) }}</p>
           </div>
@@ -47,6 +53,7 @@
     {% endfor %}
   </div>
 </section>
+
 {% endblock %}
 
 {% block footer %}
@@ -62,4 +69,5 @@
     </div>
   </div>
 </footer>
+
 {% endblock %}

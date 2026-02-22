@@ -47,6 +47,25 @@ def movie_with_details(movie: dict) -> dict:
     return movie_copy
 
 
+def movie_with_details(movie: dict) -> dict:
+    movie_copy = dict(movie)
+    title = movie_copy.get("title", "")
+    year_match = re.search(r"\((\d{4})\)\s*$", title)
+    movie_copy["year"] = year_match.group(1) if year_match else "Unknown"
+    movie_copy["clean_title"] = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
+    genres = movie_copy.get("genres", "")
+    genre_list = [g for g in genres.split("|") if g]
+    movie_copy["genre_list"] = genre_list
+    primary = genre_list[0] if genre_list else "cinematic"
+    movie_copy["description"] = (
+        f"{movie_copy['clean_title']} is a {primary.lower()} story released in {movie_copy['year']}. "
+        f"Genres: {', '.join(genre_list) if genre_list else 'Not listed'}."
+    )
+    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
+    movie_copy["poster_url"] = f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
+    return movie_copy
+
+
 def current_user_id() -> int | None:
     return session.get("user_id")
 
@@ -73,7 +92,9 @@ def register():
         password = request.form["password"]
         if len(password) < 8:
             flash("Password must be at least 8 characters.", "danger")
+
             return render_template("register.html", auth_mode="register", auth_page=True)
+            return render_template("register.html", auth_mode="register")
 
         password_hash = generate_password_hash(password)
         try:
@@ -85,6 +106,7 @@ def register():
 
     mode = request.args.get("mode") or ("register" if request.method == "POST" else None)
     return render_template("register.html", auth_mode=mode, auth_page=True)
+    return render_template("register.html", auth_mode=mode)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -104,6 +126,8 @@ def login():
 
     mode = request.args.get("mode") or ("login" if request.method == "POST" else None)
     return render_template("login.html", auth_mode=mode, auth_page=True)
+    return render_template("login.html", auth_mode=mode)
+
 
 
 @app.route("/logout")
