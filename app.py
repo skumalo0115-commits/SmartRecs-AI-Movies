@@ -1,7 +1,12 @@
 from __future__ import annotations
 
-from collections import Counter
+import json
+import os
 import re
+from collections import Counter
+from functools import lru_cache
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 import pandas as pd
 from flask import Flask, flash, redirect, render_template, request, session, url_for
@@ -16,53 +21,133 @@ app.config["SECRET_KEY"] = "change-this-in-production"
 init_db()
 recommender = SmartRecommender()
 movies_df = pd.read_csv("data/movies.csv")
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+OMDB_API_KEY = os.getenv("OMDB_API_KEY", "thewdb")
 
 POSTER_MAP = {
     "inception": "https://image.tmdb.org/t/p/w500/8IB2e4r4oVhHnANbnm7O3Tj6tF8.jpg",
     "interstellar": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
     "the matrix": "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
     "the dark knight": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    "dune": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+    "mad max: fury road": "https://image.tmdb.org/t/p/w500/hA2ple9q4qnwxp3hKVNhroipsir.jpg",
+    "parasite": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    "pulp fiction": "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+    "the godfather": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+    "spider-man: into the spider-verse": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+    "whiplash": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
+    "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
+    "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+}
+
+YEAR_MAP = {
+    "interstellar": "2014",
+    "inception": "2010",
+    "dune": "2021",
+    "mad max: fury road": "2015",
+    "parasite": "2019",
+    "pulp fiction": "1994",
+    "the godfather": "1972",
+    "spider-man: into the spider-verse": "2018",
+    "whiplash": "2014",
+    "the social network": "2010",
+    "the lord of the rings: the fellowship of the ring": "2001",
+}
+
+TRAILER_MAP = {
+    "inception": "YoHD9XEInc0",
+    "interstellar": "zSWdZVtXT7E",
+    "the matrix": "vKQi3bBA1y8",
+    "the dark knight": "EXeTwQWrcwY",
+    "dune": "n9xhJrPXop4",
+    "mad max: fury road": "hEJnMQG9ev8",
+    "parasite": "5xH0HfJHsaY",
+    "pulp fiction": "s7EdQ4FqbhY",
+    "the godfather": "sY1S34973zA",
 }
 
 
+def _safe_json_get(url: str, timeout: float = 3.5) -> dict:
+    try:
+        with urlopen(url, timeout=timeout) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except Exception:
+        return {}
+
+
+@lru_cache(maxsize=1200)
+def omdb_movie_data(clean_title: str, year: str | None) -> dict:
+    if not OMDB_API_KEY:
+        return {}
+    params = {"apikey": OMDB_API_KEY, "t": clean_title}
+    if year and year.isdigit():
+        params["y"] = year
+    data = _safe_json_get(f"https://www.omdbapi.com/?{urlencode(params)}")
+    if data.get("Response") == "True":
+        return data
+    return {}
+
+
+@lru_cache(maxsize=1200)
+def tmdb_poster_url(clean_title: str, year: str) -> str | None:
+    if not TMDB_API_KEY:
+        return None
+    params = {"api_key": TMDB_API_KEY, "query": clean_title}
+    if year.isdigit():
+        params["year"] = year
+    data = _safe_json_get(f"https://api.themoviedb.org/3/search/movie?{urlencode(params)}")
+    results = data.get("results", [])
+    if not results:
+        return None
+    path = results[0].get("poster_path")
+    return f"https://image.tmdb.org/t/p/w500{path}" if path else None
+
+
 def movie_with_details(movie: dict) -> dict:
     movie_copy = dict(movie)
-    title = movie_copy.get("title", "")
-    year_match = re.search(r"\((\d{4})\)\s*$", title)
-    movie_copy["year"] = year_match.group(1) if year_match else "Unknown"
-    clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
+    raw_title = movie_copy.get("title", "")
+    year_match = re.search(r"\((\d{4})\)\s*$", raw_title)
+    parsed_year = year_match.group(1) if year_match else None
+    clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", raw_title).strip()
+
+    lower_title = clean_title.lower()
+    omdb = omdb_movie_data(clean_title, parsed_year)
+
+    resolved_year = parsed_year or YEAR_MAP.get(lower_title)
+    if not resolved_year:
+        omdb_year_match = re.search(r"\d{4}", omdb.get("Year", ""))
+        resolved_year = omdb_year_match.group(0) if omdb_year_match else "2000"
+
+    genre_from_dataset = movie_copy.get("genres", "")
+    genre_list = [g for g in genre_from_dataset.split("|") if g]
+    pretty_genres = omdb.get("Genre") or ", ".join(genre_list) or "Genre unavailable"
+
+    released = omdb.get("Released")
+    release_date = released if released and released != "N/A" else f"01 Jan {resolved_year}"
+    plot = omdb.get("Plot")
+    description = (
+        plot
+        if plot and plot != "N/A"
+        else f"{clean_title} delivers a compelling cinematic journey with strong performances and memorable storytelling."
+    )
+
+    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
+    poster_url = (
+        POSTER_MAP.get(lower_title)
+        or (omdb.get("Poster") if omdb.get("Poster") and omdb.get("Poster") != "N/A" else None)
+        or tmdb_poster_url(clean_title, resolved_year)
+        or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
+    )
+
+    trailer_id = TRAILER_MAP.get(lower_title)
+
     movie_copy["clean_title"] = clean_title
-    genres = movie_copy.get("genres", "")
-    genre_list = [g for g in genres.split("|") if g]
-    movie_copy["genre_list"] = genre_list
-    primary = genre_list[0] if genre_list else "cinematic"
-    movie_copy["release_date"] = f"01 Jan {movie_copy['year']}" if movie_copy["year"] != "Unknown" else "Release date unavailable"
-    movie_copy["description"] = (
-        f"{clean_title} follows a compelling {primary.lower()} arc with strong character stakes and cinematic tension. "
-        f"This title blends {', '.join(genre_list) if genre_list else 'multiple'} elements into an accessible movie-night pick. "
-        f"Recommended for viewers who enjoy immersive storytelling and high replay value."
-    )
-    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
-    movie_copy["poster_url"] = POSTER_MAP.get(clean_title.lower(), f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720")
-    return movie_copy
-
-
-def movie_with_details(movie: dict) -> dict:
-    movie_copy = dict(movie)
-    title = movie_copy.get("title", "")
-    year_match = re.search(r"\((\d{4})\)\s*$", title)
-    movie_copy["year"] = year_match.group(1) if year_match else "Unknown"
-    movie_copy["clean_title"] = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
-    genres = movie_copy.get("genres", "")
-    genre_list = [g for g in genres.split("|") if g]
-    movie_copy["genre_list"] = genre_list
-    primary = genre_list[0] if genre_list else "cinematic"
-    movie_copy["description"] = (
-        f"{movie_copy['clean_title']} is a {primary.lower()} story released in {movie_copy['year']}. "
-        f"Genres: {', '.join(genre_list) if genre_list else 'Not listed'}."
-    )
-    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
-    movie_copy["poster_url"] = f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
+    movie_copy["year"] = resolved_year
+    movie_copy["release_date"] = release_date
+    movie_copy["description"] = description
+    movie_copy["pretty_genres"] = pretty_genres
+    movie_copy["poster_url"] = poster_url
+    movie_copy["trailer_embed_url"] = f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else None
     return movie_copy
 
 
@@ -92,9 +177,7 @@ def register():
         password = request.form["password"]
         if len(password) < 8:
             flash("Password must be at least 8 characters.", "danger")
-
             return render_template("register.html", auth_mode="register", auth_page=True)
-            return render_template("register.html", auth_mode="register")
 
         password_hash = generate_password_hash(password)
         try:
@@ -106,7 +189,6 @@ def register():
 
     mode = request.args.get("mode") or ("register" if request.method == "POST" else None)
     return render_template("register.html", auth_mode=mode, auth_page=True)
-    return render_template("register.html", auth_mode=mode)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -120,14 +202,13 @@ def login():
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             session["email"] = user["email"]
+            flash("Signed in successfully. Welcome back!", "success")
             return redirect(url_for("dashboard"))
 
         flash("Invalid credentials.", "danger")
 
     mode = request.args.get("mode") or ("login" if request.method == "POST" else None)
     return render_template("login.html", auth_mode=mode, auth_page=True)
-    return render_template("login.html", auth_mode=mode)
-
 
 
 @app.route("/logout")
@@ -189,28 +270,26 @@ def dashboard():
         rated_movies = movies_df[movies_df["movie_id"].isin(rated_movie_ids)]
         genre_counter = Counter()
         for genre_str in rated_movies["genres"]:
-            for g in genre_str.split("|"):
-                genre_counter[g] += 1
+            for genre in genre_str.split("|"):
+                genre_counter[genre] += 1
         if genre_counter:
             top_genre = genre_counter.most_common(1)[0][0]
         avg_rating = sum(r["rating"] for r in ratings) / rating_count
         score_pct = int((avg_rating / 5.0) * 100)
-
-    recs = get_recommendations(user_id)
 
     return render_template(
         "dashboard.html",
         rating_count=rating_count,
         top_genre=top_genre,
         score_pct=score_pct,
-        recommendations=recs,
+        recommendations=get_recommendations(user_id),
         active_tab="dashboard",
     )
 
 
 def get_recommendations(user_id: int):
     app_ratings = load_app_ratings()
-    recs = recommender.recommend(user_id, app_ratings, top_n=10)
+    recs = recommender.recommend(user_id, app_ratings, top_n=12)
     return [movie_with_details(movie) for movie in recs.to_dict(orient="records")]
 
 
@@ -232,7 +311,7 @@ def rate_movies():
             """,
             (user_id, movie_id, rating),
         )
-        flash("Rating saved.", "success")
+        flash("Rating saved successfully!", "success")
         return redirect(url_for("rate_movies"))
 
     rated_ids = {r["movie_id"] for r in fetch_all("SELECT movie_id FROM user_ratings WHERE user_id = ?", (user_id,))}

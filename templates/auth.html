@@ -1,28 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="auth-screen">
-
-  <div class="auth-content container auth-enter">
-
   <div class="auth-overlay"></div>
-  <div class="auth-content container">
-
+  <div class="auth-content container {% if not auth_mode %}auth-enter{% endif %}">
     <h1 class="auth-logo">SmartRecs</h1>
     <p class="auth-tagline">Your next favorite movie is one click away.</p>
 
-    <div class="auth-actions {% if auth_mode %}auth-actions-hidden{% endif %}">
-
+    {% if not auth_mode %}
+    <div class="auth-actions">
       <button class="btn netflix-btn auth-shift" data-open-auth="login">Login</button>
       <button class="btn netflix-btn btn-outline auth-shift" data-open-auth="register">Register</button>
-
-      <button class="btn netflix-btn" data-open-auth="login">Login</button>
-      <button class="btn netflix-btn btn-outline" data-open-auth="register">Register</button>
-
     </div>
+    {% endif %}
 
-    <div class="auth-form-wrap {% if auth_mode %}show{% endif %}" id="authFormWrap">
+    {% if auth_mode %}
+    <div class="auth-form-wrap show" id="authFormWrap">
       <div class="auth-form-card">
-        <h2 id="authFormTitle">{{ 'Create Account' if auth_mode == 'register' else 'Sign In' }}</h2>
+        <h2 class="auth-form-title">{{ 'Register' if auth_mode == 'register' else 'Sign In' }}</h2>
         {% if auth_mode == 'register' %}
         <form method="post" action="{{ url_for('register') }}">
           <div class="mb-3">
@@ -30,13 +24,10 @@
             <input name="username" class="form-control netflix-input" required>
           </div>
           <div class="mb-3">
-
             <label class="form-label">Email</label>
             <input type="email" name="email" class="form-control netflix-input" placeholder="name@email.com">
           </div>
           <div class="mb-3">
-
-
             <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control netflix-input" required>
           </div>
@@ -57,6 +48,7 @@
         {% endif %}
       </div>
     </div>
+    {% endif %}
   </div>
 </section>
 
@@ -64,14 +56,10 @@
   document.querySelectorAll('[data-open-auth]').forEach((button) => {
     button.addEventListener('click', () => {
       const mode = button.getAttribute('data-open-auth');
-
       document.querySelector('.auth-content')?.classList.add('auth-leave');
       setTimeout(() => {
         window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
-      }, 300);
-
-      window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
-
+      }, 280);
     });
   });
 </script>
