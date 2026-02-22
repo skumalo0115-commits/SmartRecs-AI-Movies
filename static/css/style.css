@@ -105,8 +105,15 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 .movie-info { padding: .8rem; }
 .movie-info p { color: #b9b9b9; }
 
+
 .netflix-modal { background: #131722; color: #fff; border: 1px solid rgba(255,255,255,.12); }
 .score-chip { color: #fff; background: #2f3443; display: inline-block; padding: .2rem .5rem; border-radius: 999px; }
+
+
+
+.netflix-modal { background: #131722; color: #fff; border: 1px solid rgba(255,255,255,.12); }
+.score-chip { color: #fff; background: #2f3443; display: inline-block; padding: .2rem .5rem; border-radius: 999px; }
+
 
 .trailer-wrap h6 { text-align: center; margin-bottom: .7rem; color: #eecfff; }
 .trailer-frame { overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 20px rgba(0,0,0,.35); }
@@ -160,4 +167,41 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 @media (max-width: 576px) {
   .auth-logo { font-size: 2.7rem; }
   .star-action-row { justify-content: center; }
+
+}
+
+
+.flash-wrap .alert {
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.28);
+  animation: flashIn .35s ease;
+}
+.flash-wrap .alert-success {
+  background: linear-gradient(120deg, rgba(25,135,84,.85), rgba(34,197,94,.3));
+  color: #ebfff4;
+}
+.flash-wrap .alert-danger {
+  background: linear-gradient(120deg, rgba(220,53,69,.85), rgba(229,9,20,.25));
+  color: #fff1f3;
+}
+@keyframes flashIn { from {opacity: 0; transform: translateY(-6px);} to {opacity:1; transform: translateY(0);} }
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+.movie-actions {
+  margin-top: auto;
+  padding-top: .4rem;
+}
+
+.profile-card-cool {
+  max-width: 860px;
+  background: linear-gradient(145deg, rgba(24,28,40,.92), rgba(14,17,26,.95));
+  border: 1px solid rgba(177,92,255,.25);
+  box-shadow: 0 18px 35px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04) inset;
+
 }
