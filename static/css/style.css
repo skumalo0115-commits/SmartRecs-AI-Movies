@@ -335,19 +335,3 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   from { opacity: 0; transform: translateY(28px) scale(.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-
-
-.reveal-item {
-  opacity: 0;
-  transform: translateY(18px) scale(.985);
-  transition: opacity .45s ease, transform .45s ease;
-}
-.reveal-item.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-@keyframes statFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}

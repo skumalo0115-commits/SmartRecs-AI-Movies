@@ -9,6 +9,9 @@ from urllib.parse import quote_plus, urlencode
 from urllib.request import urlopen
 
 import pandas as pd
+import json
+from urllib.parse import quote_plus, urlencode
+from urllib.request import urlopen
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -41,10 +44,6 @@ POSTER_MAP = {
     "the godfather": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
     "whiplash": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
     "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
-    "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
-    "parasite": "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
-    "dune": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-    "spider-man: into the spider-verse": "https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
     "the grand budapest hotel": "https://image.tmdb.org/t/p/w500/eWdyYQreja6JGCzqHWXpWHDrrPo.jpg",
     "her": "https://image.tmdb.org/t/p/w500/eCOtqtfvn7mxGl6nfmq4b1exJRc.jpg",
     "la la land": "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg",
@@ -59,7 +58,7 @@ POSTER_MAP = {
     "coco": "https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg",
     "ford v ferrari": "https://image.tmdb.org/t/p/w500/dR1Ju50iudrOh3YgfwkAU1g2HZe.jpg",
     "knives out": "https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg",
-    "the martian": "https://m.media-amazon.com/images/M/MV5BMTU0NzI1Nzg2Nl5BMl5BanBnXkFtZTgwNTE5MTU0NjE@._V1_SX500.jpg",
+    "the martian": "https://image.tmdb.org/t/p/w500/5aGhaIHYuQbqlHWvWYqMCnj40y2.jpg",
     "no country for old men": "https://image.tmdb.org/t/p/w500/6d5XOczc226jECq0LIX0siKtgHR.jpg",
     "the imitation game": "https://image.tmdb.org/t/p/w500/zSqJ1qFq8NXFfi7JeIYMlzyR0dx.jpg",
     "inside out": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
@@ -232,9 +231,12 @@ def movie_with_details(movie: dict) -> dict:
     movie_copy["release_date"] = release_date
     movie_copy["description"] = description
     movie_copy["pretty_genres"] = pretty_genres
-    movie_copy["poster_url"] = poster_url
+    movie_copy["poster_url"] = poster_url or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
+
     movie_copy["trailer_embed_url"] = (
-        f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else f"https://www.youtube.com/embed?listType=search&list={fallback_query}"
+        f"https://www.youtube.com/embed/{trailer_id}"
+        if trailer_id
+        else f"https://www.youtube.com/embed?listType=search&list={fallback_query}"
     )
     return movie_copy
 
