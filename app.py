@@ -338,13 +338,8 @@ def register():
         password_hash = generate_password_hash(password)
         try:
             execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password_hash))
-            user = fetch_one("SELECT id, username, email FROM users WHERE username = ?", (username,))
-            if user:
-                session["user_id"] = user["id"]
-                session["username"] = user["username"]
-                session["email"] = user["email"]
-            flash("Registration successful. Welcome to SmartRecs!", "success")
-            return redirect(url_for("dashboard"))
+            flash("Registration successful. Please log in.", "success")
+            return redirect(url_for("login"))
         except Exception:
             flash("Username already exists.", "danger")
 
