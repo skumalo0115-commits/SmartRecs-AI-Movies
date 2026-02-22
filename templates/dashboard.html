@@ -4,11 +4,7 @@
   <div class="container">
     <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
     <p>Your movie night dashboard with AI-personalized picks.</p>
-
-    <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
-
     <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn">Rate Movies</a>
-
   </div>
 </section>
 
@@ -41,9 +37,6 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-
-            <p><strong>Release date:</strong> {{ movie.release_date }}</p>
-
             <p>{{ movie.description }}</p>
             <p class="text-danger fw-bold">AI Score: {{ '%.2f'|format(movie.score) }}</p>
           </div>
@@ -53,21 +46,4 @@
     {% endfor %}
   </div>
 </section>
-
-{% endblock %}
-
-{% block footer %}
-<footer class="site-footer dashboard-footer mt-5">
-  <div class="container py-4">
-    <h4 class="footer-title mb-3">Let’s Connect</h4>
-    <div class="social-icon-row">
-      <a href="https://github.com/skumalo0115-commits" target="_blank" class="social-pill" aria-label="GitHub"><i class="bi bi-github"></i><span>GitHub</span></a>
-      <a href="https://sbahle-kumalo-emerging-technologies.base44.app/" target="_blank" class="social-pill" aria-label="Portfolio"><i class="bi bi-globe2"></i><span>Portfolio</span></a>
-      <a href="https://www.facebook.com/share/1DL66XnWr5/?mibextid=wwXIfr" target="_blank" class="social-pill" aria-label="Facebook"><i class="bi bi-facebook"></i><span>Facebook</span></a>
-      <a href="https://wa.me/27827744933" target="_blank" class="social-pill" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i><span>WhatsApp</span></a>
-      <a href="https://www.linkedin.com/in/sbahle-kumalo-b4b498267/" target="_blank" class="social-pill" aria-label="LinkedIn"><i class="bi bi-linkedin"></i><span>LinkedIn</span></a>
-    </div>
-  </div>
-</footer>
-
 {% endblock %}

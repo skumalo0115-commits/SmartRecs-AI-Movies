@@ -13,17 +13,6 @@
 
         <form method="post" class="star-form mt-3">
           <input type="hidden" name="movie_id" value="{{ movie.movie_id }}">
-
-          <div class="star-action-row">
-            <div class="rating-stars">
-              {% for value in [5,4,3,2,1] %}
-              <input type="radio" id="star{{ movie.movie_id }}-{{ value }}" name="rating" value="{{ value }}" required>
-              <label for="star{{ movie.movie_id }}-{{ value }}">★</label>
-              {% endfor %}
-            </div>
-            <button class="btn btn-sm netflix-btn">Save Rating</button>
-          </div>
-
           <div class="rating-stars">
             {% for value in [5,4,3,2,1] %}
             <input type="radio" id="star{{ movie.movie_id }}-{{ value }}" name="rating" value="{{ value }}" required>
@@ -42,14 +31,7 @@
             <h5 class="modal-title">{{ movie.clean_title }} ({{ movie.year }})</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
-
-          <div class="modal-body">
-            <p><strong>Release date:</strong> {{ movie.release_date }}</p>
-            <p>{{ movie.description }}</p>
-          </div>
-
           <div class="modal-body"><p>{{ movie.description }}</p></div>
-
         </div>
       </div>
     </div>

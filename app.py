@@ -17,35 +17,6 @@ init_db()
 recommender = SmartRecommender()
 movies_df = pd.read_csv("data/movies.csv")
 
-POSTER_MAP = {
-    "inception": "https://image.tmdb.org/t/p/w500/8IB2e4r4oVhHnANbnm7O3Tj6tF8.jpg",
-    "interstellar": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-    "the matrix": "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-    "the dark knight": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-}
-
-
-def movie_with_details(movie: dict) -> dict:
-    movie_copy = dict(movie)
-    title = movie_copy.get("title", "")
-    year_match = re.search(r"\((\d{4})\)\s*$", title)
-    movie_copy["year"] = year_match.group(1) if year_match else "Unknown"
-    clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
-    movie_copy["clean_title"] = clean_title
-    genres = movie_copy.get("genres", "")
-    genre_list = [g for g in genres.split("|") if g]
-    movie_copy["genre_list"] = genre_list
-    primary = genre_list[0] if genre_list else "cinematic"
-    movie_copy["release_date"] = f"01 Jan {movie_copy['year']}" if movie_copy["year"] != "Unknown" else "Release date unavailable"
-    movie_copy["description"] = (
-        f"{clean_title} follows a compelling {primary.lower()} arc with strong character stakes and cinematic tension. "
-        f"This title blends {', '.join(genre_list) if genre_list else 'multiple'} elements into an accessible movie-night pick. "
-        f"Recommended for viewers who enjoy immersive storytelling and high replay value."
-    )
-    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
-    movie_copy["poster_url"] = POSTER_MAP.get(clean_title.lower(), f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720")
-    return movie_copy
-
 
 def movie_with_details(movie: dict) -> dict:
     movie_copy = dict(movie)
@@ -88,24 +59,20 @@ def index():
 def register():
     if request.method == "POST":
         username = request.form["username"].strip().lower()
-        email = request.form.get("email", "").strip().lower() or None
         password = request.form["password"]
         if len(password) < 8:
             flash("Password must be at least 8 characters.", "danger")
-
-            return render_template("register.html", auth_mode="register", auth_page=True)
             return render_template("register.html", auth_mode="register")
 
         password_hash = generate_password_hash(password)
         try:
-            execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password_hash))
+            execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (username, password_hash))
             flash("Registration successful. Please log in.", "success")
             return redirect(url_for("login"))
         except Exception:
             flash("Username already exists.", "danger")
 
     mode = request.args.get("mode") or ("register" if request.method == "POST" else None)
-    return render_template("register.html", auth_mode=mode, auth_page=True)
     return render_template("register.html", auth_mode=mode)
 
 
@@ -119,58 +86,18 @@ def login():
         if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["username"] = user["username"]
-            session["email"] = user["email"]
             return redirect(url_for("dashboard"))
 
         flash("Invalid credentials.", "danger")
 
     mode = request.args.get("mode") or ("login" if request.method == "POST" else None)
-    return render_template("login.html", auth_mode=mode, auth_page=True)
     return render_template("login.html", auth_mode=mode)
-
 
 
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
-
-
-@app.route("/profile", methods=["GET", "POST"])
-def profile():
-    user_id = current_user_id()
-    if not user_id:
-        return redirect(url_for("login"))
-
-    user = fetch_one("SELECT id, username, email, password_hash FROM users WHERE id = ?", (user_id,))
-    if not user:
-        session.clear()
-        return redirect(url_for("login"))
-
-    if request.method == "POST":
-        new_username = request.form["username"].strip().lower()
-        new_email = request.form.get("email", "").strip().lower() or None
-        new_password = request.form.get("password", "")
-
-        if new_password and len(new_password) < 8:
-            flash("New password must be at least 8 characters.", "danger")
-            return render_template("profile.html", user=user, active_tab="profile")
-
-        password_hash = generate_password_hash(new_password) if new_password else user["password_hash"]
-        try:
-            execute(
-                "UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?",
-                (new_username, new_email, password_hash, user_id),
-            )
-            session["username"] = new_username
-            session["email"] = new_email
-            flash("Profile updated successfully.", "success")
-            return redirect(url_for("profile"))
-        except Exception:
-            flash("That username is already taken.", "danger")
-
-    refreshed = fetch_one("SELECT id, username, email FROM users WHERE id = ?", (user_id,))
-    return render_template("profile.html", user=refreshed, active_tab="profile")
 
 
 @app.route("/dashboard")

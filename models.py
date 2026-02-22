@@ -22,14 +22,10 @@ def init_db() -> None:
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE NOT NULL,
-                email TEXT,
                 password_hash TEXT NOT NULL
             )
             """
         )
-        columns = {row[1] for row in conn.execute("PRAGMA table_info(users)").fetchall()}
-        if "email" not in columns:
-            conn.execute("ALTER TABLE users ADD COLUMN email TEXT")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS user_ratings (
