@@ -79,7 +79,7 @@
         if (!href || href.startsWith('#')) return;
         event.preventDefault();
         document.body.classList.add('page-leave');
-        setTimeout(() => { window.location.href = href; }, 220);
+        setTimeout(() => { window.location.href = href; }, 40);
       });
     });
 
@@ -91,7 +91,7 @@
     });
 
 
-    const revealTargets = document.querySelectorAll('.movie-card, .nf-stat, .profile-card, .auth-form-card, .social-pill, .row-title, .hero-content-wrap > *');
+    const revealTargets = document.querySelectorAll('.movie-card, .nf-stat, .profile-card, .auth-form-card, .social-pill, .row-title, .hero-content-wrap > *, .container > *, section > *');
     revealTargets.forEach((el) => el.classList.add('reveal-item'));
 
     const observer = new IntersectionObserver((entries) => {

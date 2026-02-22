@@ -59,7 +59,7 @@
       document.querySelector('.auth-content')?.classList.add('auth-leave');
       setTimeout(() => {
         window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
-      }, 110);
+      }, 10);
     });
   });
 
