@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 import json
 import os
 import re
@@ -8,7 +9,15 @@ from functools import lru_cache
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+import os
+import re
+from collections import Counter
+
+
 import pandas as pd
+import json
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -22,7 +31,9 @@ init_db()
 recommender = SmartRecommender()
 movies_df = pd.read_csv("data/movies.csv")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+
 OMDB_API_KEY = os.getenv("OMDB_API_KEY", "thewdb")
+
 
 POSTER_MAP = {
     "inception": "https://image.tmdb.org/t/p/w500/8IB2e4r4oVhHnANbnm7O3Tj6tF8.jpg",
@@ -39,6 +50,7 @@ POSTER_MAP = {
     "the social network": "https://image.tmdb.org/t/p/w500/n0ybibhJtQ5icDqTp8eRytcIHJx.jpg",
     "the lord of the rings: the fellowship of the ring": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
 }
+
 
 YEAR_MAP = {
     "interstellar": "2014",
@@ -101,10 +113,43 @@ def tmdb_poster_url(clean_title: str, year: str) -> str | None:
         return None
     path = results[0].get("poster_path")
     return f"https://image.tmdb.org/t/p/w500{path}" if path else None
+=======
+TRAILER_MAP = {
+    "inception": "YoHD9XEInc0",
+    "interstellar": "zSWdZVtXT7E",
+    "the matrix": "vKQi3bBA1y8",
+    "the dark knight": "EXeTwQWrcwY",
+    "dune": "n9xhJrPXop4",
+    "mad max: fury road": "hEJnMQG9ev8",
+    "parasite": "5xH0HfJHsaY",
+    "pulp fiction": "s7EdQ4FqbhY",
+    "the godfather": "sY1S34973zA",
+}
+
+
+def tmdb_poster_url(clean_title: str, year: str) -> str | None:
+    if not TMDB_API_KEY:
+        return None
+    try:
+        params = {"api_key": TMDB_API_KEY, "query": clean_title}
+        if year.isdigit():
+            params["year"] = year
+        url = f"https://api.themoviedb.org/3/search/movie?{urlencode(params)}"
+        with urlopen(url, timeout=3) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        results = data.get("results", [])
+        if not results:
+            return None
+        path = results[0].get("poster_path")
+        return f"https://image.tmdb.org/t/p/w500{path}" if path else None
+    except Exception:
+        return None
+
 
 
 def movie_with_details(movie: dict) -> dict:
     movie_copy = dict(movie)
+
     raw_title = movie_copy.get("title", "")
     year_match = re.search(r"\((\d{4})\)\s*$", raw_title)
     parsed_year = year_match.group(1) if year_match else None
@@ -136,10 +181,34 @@ def movie_with_details(movie: dict) -> dict:
         POSTER_MAP.get(lower_title)
         or (omdb.get("Poster") if omdb.get("Poster") and omdb.get("Poster") != "N/A" else None)
         or tmdb_poster_url(clean_title, resolved_year)
+
+    title = movie_copy.get("title", "")
+    year_match = re.search(r"\((\d{4})\)\s*$", title)
+    year = year_match.group(1) if year_match else "Unknown"
+    clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
+    genres = movie_copy.get("genres", "")
+    genre_list = [g for g in genres.split("|") if g]
+
+    movie_copy["year"] = year
+    movie_copy["clean_title"] = clean_title
+    movie_copy["genre_list"] = genre_list
+    movie_copy["release_date"] = f"01 Jan {year}" if year != "Unknown" else "Release date unavailable"
+    movie_copy["description"] = (
+        f"{clean_title} is a {genre_list[0].lower() if genre_list else 'cinematic'} story"
+        f" with themes across {', '.join(genre_list) if genre_list else 'multiple genres'}."
+    )
+
+    lower_title = clean_title.lower()
+    movie_id = movie_copy.get("movie_id", movie_copy.get("id", 0))
+    movie_copy["poster_url"] = (
+        POSTER_MAP.get(lower_title)
+        or tmdb_poster_url(clean_title, year)
+
         or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
     )
 
     trailer_id = TRAILER_MAP.get(lower_title)
+
 
     movie_copy["clean_title"] = clean_title
     movie_copy["year"] = resolved_year
@@ -147,6 +216,7 @@ def movie_with_details(movie: dict) -> dict:
     movie_copy["description"] = description
     movie_copy["pretty_genres"] = pretty_genres
     movie_copy["poster_url"] = poster_url
+
     movie_copy["trailer_embed_url"] = f"https://www.youtube.com/embed/{trailer_id}" if trailer_id else None
     return movie_copy
 
