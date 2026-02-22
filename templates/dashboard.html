@@ -44,8 +44,6 @@
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
             <p><strong>Description:</strong> {{ movie.description }}</p>
 
-            <p>{{ movie.description }}</p>
-
             <p class="text-danger fw-bold">AI Score: {{ '%.2f'|format(movie.score) }}</p>
             {% if movie.trailer_embed_url %}
             <div class="trailer-wrap mt-3">

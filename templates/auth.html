@@ -3,19 +3,19 @@
 <section class="auth-screen">
   <div class="auth-overlay"></div>
   <div class="auth-content container {% if not auth_mode %}auth-enter{% endif %}">
-    <h1 class="auth-logo">SmartRecs</h1>
-    <p class="auth-tagline">Your next favorite movie is one click away.</p>
+    <h1 class="auth-logo">SmartRecs <span class="popcorn-pop" aria-hidden="true">🍿</span></h1>
+    <p class="auth-tagline auth-tagline-swoop">Your next favorite movie is one click away.</p>
 
     {% if not auth_mode %}
-    <div class="auth-actions">
-      <button class="btn netflix-btn auth-shift" data-open-auth="login">Login</button>
-      <button class="btn netflix-btn btn-outline auth-shift" data-open-auth="register">Register</button>
+    <div class="auth-actions auth-actions-merge">
+      <button class="btn netflix-btn auth-shift auth-btn-left" data-open-auth="login">Login</button>
+      <button class="btn netflix-btn btn-outline auth-shift auth-btn-right" data-open-auth="register">Register</button>
     </div>
     {% endif %}
 
     {% if auth_mode %}
     <div class="auth-form-wrap show" id="authFormWrap">
-      <div class="auth-form-card">
+      <div class="auth-form-card auth-form-card-enter">
         <h2 class="auth-form-title">{{ 'Register' if auth_mode == 'register' else 'Sign In' }}</h2>
         {% if auth_mode == 'register' %}
         <form method="post" action="{{ url_for('register') }}">
