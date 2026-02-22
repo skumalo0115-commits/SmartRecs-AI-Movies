@@ -31,7 +31,7 @@ POSTER_MAP = {
     "the dark knight": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
     "arrival": "https://image.tmdb.org/t/p/w500/x2FJsf1ElAgr63Y3PNPtJrcmpoe.jpg",
     "avatar": "https://image.tmdb.org/t/p/w500/kyeqWdyUXW608qlYkRqosgbbJyK.jpg",
-    "the prestige": "https://image.tmdb.org/t/p/w500/bdN3gXuIZYaJP7ftKK2sU0nPtEA.jpg",
+    "the prestige": "https://image.tmdb.org/t/p/w500/5MXyQfz8xUP3dIFPTubhTsbFY6N.jpg",
     "blade runner 2049": "https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
     "guardians of the galaxy": "https://image.tmdb.org/t/p/w500/r7vmZjiyZw9rpJMQJdXpjgiCOk9.jpg",
     "shutter island": "https://image.tmdb.org/t/p/w500/4GDy0PHYX3VRXUtwK5ysFbg3kEx.jpg",
@@ -338,8 +338,13 @@ def register():
         password_hash = generate_password_hash(password)
         try:
             execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password_hash))
-            flash("Registration successful. Please log in.", "success")
-            return redirect(url_for("login"))
+            user = fetch_one("SELECT id, username, email FROM users WHERE username = ?", (username,))
+            if user:
+                session["user_id"] = user["id"]
+                session["username"] = user["username"]
+                session["email"] = user["email"]
+            flash("Registration successful. Welcome to SmartRecs!", "success")
+            return redirect(url_for("dashboard"))
         except Exception:
             flash("Username already exists.", "danger")
 
