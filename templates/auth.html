@@ -59,8 +59,20 @@
       document.querySelector('.auth-content')?.classList.add('auth-leave');
       setTimeout(() => {
         window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
-      }, 280);
+      }, 110);
     });
   });
+
+
+  document.querySelectorAll('.auth-form-card form').forEach((form) => {
+    form.addEventListener('submit', () => {
+      const btn = form.querySelector('button[type="submit"], button');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = btn.textContent.includes('...') ? btn.textContent : `${btn.textContent}...`;
+      }
+    });
+  });
+
 </script>
 {% endblock %}
