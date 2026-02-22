@@ -95,7 +95,7 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   background-position: center;
 }
 .dashboard-hero .hero-content-wrap {
-  max-width: 1080px;
+  max-width: 1000px;
 }
 .hero-intro-block {
   min-height: 60vh;
@@ -346,6 +346,7 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 }
 .hero-stats .nf-stat {
   border: 1px solid rgba(255, 255, 255, .18);
+  border-left: 4px solid var(--nf-red);
   box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
 }
 .stat-float {
@@ -377,4 +378,29 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 .reveal-item.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+
+.auth-switch-copy {
+  margin-top: 1rem;
+  text-align: center;
+  color: #cfd3df;
+  font-size: .95rem;
+}
+
+.auth-card-switch {
+  color: #ff6a8f;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0 .2rem;
+}
+
+.auth-card-switch:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.movie-description {
+  text-align: center;
+  line-height: 1.6;
 }
