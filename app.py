@@ -134,6 +134,7 @@ TRAILER_MAP = {
     "the prestige": "RLtaA9fFNXU",
     "blade runner 2049": "gCcx85zbxz4",
     "guardians of the galaxy": "d96cjJhvlMA",
+    "shutter island": "v8yrZSkKxTA",
     "mad max: fury road": "hEJnMQG9ev8",
     "the shawshank redemption": "PLl99DlL6b4",
     "pulp fiction": "s7EdQ4FqbhY",
@@ -169,9 +170,12 @@ TRAILER_MAP = {
     "jurassic world rebirth": "jan5CFWs9ic",
     "mission: impossible - the final reckoning": "fsQgc9pCyDU",
     "tron: ares": "9KVG_X_7Naw",
-    "m3gan 2.0": "f03RGS8N7hM",
+    "m3gan 2.0": "IYLHdEzsk1s",
     "how to train your dragon": "22w7z_lT6YM",
 }
+
+# Optional overrides for YouTube trailer search phrases when no direct trailer ID is set.
+TRAILER_SEARCH_QUERY_MAP = {}
 
 
 EXACT_DESCRIPTIONS = {

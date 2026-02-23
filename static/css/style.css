@@ -514,6 +514,11 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   color: #6c7484;
 }
 
+.auth-form-card .netflix-input::placeholder {
+  color: #5a5a5a;
+  opacity: 1;
+}
+
 /* modal metadata row consistency */
 .netflix-modal .modal-body p {
   font-family: Arial, Helvetica, sans-serif;
