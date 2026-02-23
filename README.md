@@ -60,10 +60,22 @@ Railway is a very easy option for this Flask project and is already prepared in 
 1. Push this repo to GitHub.
 2. Go to Railway → **New Project** → **Deploy from GitHub Repo**.
 3. Select this repo.
-4. In Railway Variables, add:
-   - `SECRET_KEY` = a long random string
-   - *(optional)* `TMDB_API_KEY`
-   - *(optional)* `OMDB_API_KEY`
+4. In Railway **Variables**, add these keys:
+   - `SECRET_KEY` (required)
+   - `TMDB_API_KEY` (optional)
+   - `OMDB_API_KEY` (optional)
+
+   Example values you can paste:
+   - `SECRET_KEY=change-this-to-a-long-random-secret-string`
+   - `TMDB_API_KEY=` *(leave empty if you do not have one)*
+   - `OMDB_API_KEY=` *(leave empty if you do not have one)*
+
+   Generate a strong `SECRET_KEY` locally with:
+   ```bash
+   python -c "import secrets; print(secrets.token_urlsafe(48))"
+   ```
+
+   ✅ App works even without TMDB/OMDB keys (it falls back to built-in descriptions, posters, and trailer search embeds).
 5. Railway will auto-build using `requirements.txt`.
 6. Railway will start app using:
    - `gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120`
