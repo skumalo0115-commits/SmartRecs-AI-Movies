@@ -266,7 +266,7 @@ def movie_with_details(movie: dict) -> dict:
     or POSTER_MAP.get(lower_title)
     or f"https://picsum.photos/seed/smartrecs-{movie_id}/480/720"
 )
-
+    
     trailer_id = TRAILER_MAP.get(lower_title)
     fallback_query = quote_plus(f"{clean_title} official trailer")
 
