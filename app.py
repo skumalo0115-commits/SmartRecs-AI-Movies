@@ -16,7 +16,7 @@ from models import execute, fetch_all, fetch_one, init_db
 from recommender import SmartRecommender
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "change-this-in-production"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-in-production")
 
 init_db()
 recommender = SmartRecommender()
@@ -521,4 +521,4 @@ def recommendations():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=True)

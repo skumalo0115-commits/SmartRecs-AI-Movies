@@ -624,3 +624,33 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
     padding: .75rem;
   }
 }
+
+/* rate page card alignment fix */
+.movie-card-rate .movie-info {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: .45rem;
+}
+.movie-card-rate .movie-meta {
+  flex: 1;
+  min-height: 110px;
+}
+.movie-card-rate .movie-actions {
+  margin-top: auto;
+  padding-top: .3rem;
+}
+.movie-card-rate .star-form {
+  margin-top: .35rem;
+  margin-bottom: 0;
+}
+.movie-card-rate .star-action-row {
+  margin-top: 0;
+  align-items: center;
+}
+.movie-card-rate .rating-stars,
+.movie-card-rate .rating-stars label,
+.movie-card-rate .star-action-row .btn {
+  margin-bottom: 0;
+  line-height: 1;
+}
