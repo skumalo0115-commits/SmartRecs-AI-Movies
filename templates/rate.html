@@ -37,7 +37,7 @@
           <div class="star-action-row">
             <div class="rating-stars">
               {% for value in [5,4,3,2,1] %}
-              <input type="radio" id="star{{ movie.movie_id }}-{{ value }}" name="rating" value="{{ value }}" required>
+              <input type="radio" id="star{{ movie.movie_id }}-{{ value }}" name="rating" value="{{ value }}" {% if movie.user_rating and movie.user_rating|int == value %}checked{% endif %} required>
               <label for="star{{ movie.movie_id }}-{{ value }}">★</label>
               {% endfor %}
             </div>
@@ -59,6 +59,11 @@
 
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
             <p class="movie-description cool-description"><strong>Description:</strong> {{ movie.description }}</p>
+            <p><strong class="stream-label">Stream:</strong>
+              <a href="https://cineb.gg/" target="_blank" rel="noopener noreferrer" class="stream-play-btn" aria-label="Stream {{ movie.clean_title }} on cineb">
+                <i class="bi bi-play-fill"></i>
+              </a>
+            </p>
 
 
             {% if movie.trailer_embed_url %}
