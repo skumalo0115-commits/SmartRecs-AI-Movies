@@ -107,11 +107,17 @@
 
 
     document.querySelectorAll('.modal').forEach((modalEl) => {
-      modalEl.addEventListener('hidden.bs.modal', () => {
+      modalEl.addEventListener('shown.bs.modal', () => {
         modalEl.querySelectorAll('iframe.trailer-iframe').forEach((frame) => {
-          const originalSrc = frame.dataset.src || frame.src;
-          frame.src = '';
-          requestAnimationFrame(() => { frame.src = originalSrc; });
+          if (!frame.src || frame.src === 'about:blank') {
+            frame.src = frame.dataset.src || 'about:blank';
+          }
+        });
+      });
+
+      modalEl.addEventListener('hide.bs.modal', () => {
+        modalEl.querySelectorAll('iframe.trailer-iframe').forEach((frame) => {
+          frame.src = 'about:blank';
         });
       });
     });

@@ -370,6 +370,14 @@ def register():
             flash("Password must be at least 8 characters.", "danger")
             return render_template("register.html", auth_mode="register", auth_page=True)
 
+        existing_user = fetch_one(
+            "SELECT id FROM users WHERE username = ? OR (email IS NOT NULL AND email = ?)",
+            (username, email),
+        )
+        if existing_user:
+            flash("Account already exists. Please sign in instead.", "warning")
+            return redirect(url_for("login", mode="login"))
+
         password_hash = generate_password_hash(password)
         try:
             execute("INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)", (username, email, password_hash))
@@ -390,9 +398,12 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"].strip().lower()
+        identity = request.form["identity"].strip().lower()
         password = request.form["password"]
-        user = fetch_one("SELECT * FROM users WHERE username = ?", (username,))
+        user = fetch_one(
+            "SELECT * FROM users WHERE username = ? OR (email IS NOT NULL AND email = ?)",
+            (identity, identity),
+        )
 
         if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
@@ -492,11 +503,26 @@ def _ratings_signature(user_id: int) -> str:
 def _cached_recommendations(user_id: int, signature: str):
     app_ratings = load_app_ratings()
     recs = recommender.recommend(user_id, app_ratings, top_n=12)
-    return [movie_with_details(movie) for movie in recs.to_dict(orient="records")]
+    return [movie_with_details_cached(movie) for movie in recs.to_dict(orient="records")]
 
 
 def get_recommendations(user_id: int):
     return _cached_recommendations(user_id, _ratings_signature(user_id))
+
+
+@lru_cache(maxsize=6000)
+def _movie_details_cached(movie_id: int, title: str, genres: str) -> dict:
+    return movie_with_details({"movie_id": movie_id, "title": title, "genres": genres})
+
+
+def movie_with_details_cached(movie: dict) -> dict:
+    movie_id = int(movie.get("movie_id") or movie.get("id") or 0)
+    title = str(movie.get("title") or "")
+    genres = str(movie.get("genres") or "")
+    details = _movie_details_cached(movie_id, title, genres)
+    merged = dict(movie)
+    merged.update(details)
+    return merged
 
 
 def get_user_rated_movies(user_id: int) -> list[dict]:
@@ -508,7 +534,7 @@ def get_user_rated_movies(user_id: int) -> list[dict]:
     rated_movies = movies_df[movies_df["movie_id"].isin(rating_map.keys())].to_dict(orient="records")
     detailed_movies = []
     for movie in rated_movies:
-        movie_detail = movie_with_details(movie)
+        movie_detail = movie_with_details_cached(movie)
         movie_detail["user_rating"] = rating_map.get(movie["movie_id"])
         movie_detail["is_rated"] = True
         detailed_movies.append(movie_detail)
@@ -546,7 +572,7 @@ def rate_movies():
     all_movies = movies_df.to_dict(orient="records")
     detailed_movies = []
     for movie in all_movies:
-        movie_detail = movie_with_details(movie)
+        movie_detail = movie_with_details_cached(movie)
         movie_detail["user_rating"] = rating_map.get(movie["movie_id"])
         detailed_movies.append(movie_detail)
 

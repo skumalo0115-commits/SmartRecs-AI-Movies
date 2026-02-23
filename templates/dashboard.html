@@ -13,8 +13,8 @@
 
     <div class="row g-3 hero-stats">
       <div class="col-md-4"><div class="nf-stat stat-float"><span>Movies Rated</span><strong>{{ rating_count }}</strong></div></div>
-      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-1"><span>Top Genre</span><strong>{{ top_genre if rating_count else "" }}</strong></div></div>
-      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-2"><span>Match Score</span><strong>{{ (score_pct ~ "%") if rating_count else "" }}</strong></div></div>
+      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-1"><span>Top Genre</span><strong>{{ top_genre if rating_count else "N/A" }}</strong></div></div>
+      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-2"><span>Match Score</span><strong>{{ (score_pct ~ "%") if rating_count else "0%" }}</strong></div></div>
     </div>
   </div>
 </section>
@@ -57,7 +57,7 @@
             <div class="trailer-wrap mt-3">
               <h6>Watch Trailer</h6>
               <div class="ratio ratio-16x9 trailer-frame">
-                <iframe src="{{ movie.trailer_embed_url }}" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <iframe src="about:blank" data-src="{{ movie.trailer_embed_url }}" class="trailer-iframe" loading="lazy" title="{{ movie.clean_title }} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
               </div>
             </div>
             {% endif %}
