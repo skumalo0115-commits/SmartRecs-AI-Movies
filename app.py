@@ -134,7 +134,6 @@ TRAILER_MAP = {
     "the prestige": "RLtaA9fFNXU",
     "blade runner 2049": "gCcx85zbxz4",
     "guardians of the galaxy": "d96cjJhvlMA",
-    "shutter island": "5iaYLCiq5RM",
     "mad max: fury road": "hEJnMQG9ev8",
     "the shawshank redemption": "PLl99DlL6b4",
     "pulp fiction": "s7EdQ4FqbhY",
@@ -146,10 +145,8 @@ TRAILER_MAP = {
     "dune": "n9xhJrPXop4",
     "spider-man: into the spider-verse": "g4Hbz2jLxvQ",
     "the grand budapest hotel": "1Fg5iWmQjwk",
-    "her": "WzV6mXIOVl4",
     "la la land": "0pdqf4P9MB8",
     "the lion king": "4sj1MT05lAA",
-    "gladiator": "owK1qxDselE",
     "the silence of the lambs": "W6Mm8Sbe__o",
     "toy story": "v-PjgYDrg70",
     "se7en": "znmZoVkCjpI",
@@ -170,8 +167,14 @@ TRAILER_MAP = {
     "jurassic world rebirth": "jan5CFWs9ic",
     "mission: impossible - the final reckoning": "fsQgc9pCyDU",
     "tron: ares": "9KVG_X_7Naw",
-    "m3gan 2.0": "d9K6vPqkR8s",
     "how to train your dragon": "22w7z_lT6YM",
+}
+
+TRAILER_SEARCH_QUERY_MAP = {
+    "gladiator": "gladiator 2000 official trailer",
+    "m3gan 2.0": "m3gan 2.0 official trailer",
+    "her": "her 2013 official trailer",
+    "shutter island": "shutter island 2010 official trailer",
 }
 
 EXACT_DESCRIPTIONS = {
@@ -296,7 +299,10 @@ def movie_with_details(movie: dict) -> dict:
 )
     
     trailer_id = TRAILER_MAP.get(lower_title)
-    fallback_query = quote_plus(f"{clean_title} official trailer")
+    trailer_search_query = TRAILER_SEARCH_QUERY_MAP.get(
+        lower_title, f"{clean_title} official trailer"
+    )
+    fallback_query = quote_plus(trailer_search_query)
 
     movie_copy["clean_title"] = clean_title
     movie_copy["year"] = resolved_year
