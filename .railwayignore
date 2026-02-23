@@ -1,0 +1,13 @@
+# Railway upload exclusions to prevent Nixpacks from scanning local virtualenv files
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.vscode/
+.env
+.env.*
+*.db
+instance/

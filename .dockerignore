@@ -1,0 +1,17 @@
+# Exclude local virtualenvs and caches from build context
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VCS/editor/env files
+.git/
+.vscode/
+.env
+.env.*
+
+# Local runtime artifacts
+*.db
+instance/
