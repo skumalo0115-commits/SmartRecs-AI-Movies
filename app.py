@@ -69,8 +69,8 @@ POSTER_MAP = {
     "the fantastic four: first steps": "https://image.tmdb.org/t/p/w500/x26MtUlwtWD26d0G0FXcppxCJio.jpg",
     "jurassic world rebirth": "https://image.tmdb.org/t/p/w500/q0fGCmjLu42MPlSO9OYWpI5w86I.jpg",
     "mission: impossible - the final reckoning": "https://image.tmdb.org/t/p/w500/z53D72EAOxGRqdr7KXXWp9dJiDe.jpg",
-    "tron: ares": "https://image.tmdb.org/t/p/w500/vnVG5v8R0ahO08B7WlOt4P8tAHW.jpg",
-    "m3gan 2.0": "https://image.tmdb.org/t/p/w500/4a63rQqIDTrYNdcnTXdPsQyxVLo.jpg",
+    "tron: ares": "https://mlpnk72yciwc.i.optimole.com/cqhiHLc.IIZS~2ef73/w:auto/h:auto/q:75/https://bleedingcool.com/wp-content/uploads/2025/04/TRON_ARES_KA_DIGITAL_1SHT_TSR_sRGB_V9.jpg",
+    "m3gan 2.0": "https://image.tmdb.org/t/p/original/oekamLQrwlJjRNmfaBE4llIvkir.jpg",
     "how to train your dragon": "https://image.tmdb.org/t/p/w500/q5pXRYTycaeW6dEgsCrd4mYPmxM.jpg",
 }
 
