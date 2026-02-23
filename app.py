@@ -169,8 +169,13 @@ TRAILER_MAP = {
     "jurassic world rebirth": "jan5CFWs9ic",
     "mission: impossible - the final reckoning": "fsQgc9pCyDU",
     "tron: ares": "9KVG_X_7Naw",
-    "m3gan 2.0": "f03RGS8N7hM",
     "how to train your dragon": "22w7z_lT6YM",
+}
+
+# Optional overrides for YouTube trailer search phrases when no direct trailer ID is set.
+TRAILER_SEARCH_QUERY_MAP = {
+    "m3gan 2.0": "M3GAN 2.0 official trailer Universal Pictures",
+    "shutter island": "Shutter Island (2010) official trailer Leonardo DiCaprio Paramount",
 }
 
 
