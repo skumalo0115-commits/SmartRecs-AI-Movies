@@ -173,6 +173,9 @@ TRAILER_MAP = {
     "how to train your dragon": "22w7z_lT6YM",
 }
 
+# Optional overrides for YouTube trailer search phrases when no direct trailer ID is set.
+TRAILER_SEARCH_QUERY_MAP = {}
+
 
 EXACT_DESCRIPTIONS = {
     "inception": "A thief who steals corporate secrets through dream-sharing technology is tasked with planting an idea into a CEO's mind.",
