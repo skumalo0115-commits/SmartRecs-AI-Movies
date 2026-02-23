@@ -283,9 +283,10 @@ def movie_with_details(movie: dict) -> dict:
     genre_list = [g for g in genres.split("|") if g]
     pretty_genres = omdb.get("Genre") or ", ".join(genre_list) or "Genre unavailable"
 
-    release_date = omdb.get("Released")
-    if not release_date or release_date == "N/A":
-        release_date = f"01 Jan {resolved_year}"
+    omdb_year = str(omdb.get("Year") or "")
+    omdb_released = str(omdb.get("Released") or "")
+    year_match = re.search(r"(\d{4})", omdb_year) or re.search(r"(\d{4})", omdb_released)
+    release_date = year_match.group(1) if year_match else resolved_year
 
     plot = omdb.get("Plot")
     description = plot if plot and plot != "N/A" else EXACT_DESCRIPTIONS.get(lower_title, DEFAULT_DESCRIPTIONS.get(lower_title, clean_title))

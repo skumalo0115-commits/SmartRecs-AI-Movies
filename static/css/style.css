@@ -693,3 +693,52 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   color: #fff;
   transform: translateY(-1px);
 }
+
+/* mobile-specific layout and nav controls */
+@media (max-width: 576px) {
+  .movie-grid,
+  .movie-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+  }
+
+  .movie-poster {
+    height: 220px;
+  }
+
+  .movie-actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  .movie-actions .btn,
+  .star-action-row .btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .star-action-row {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: .45rem;
+  }
+
+  .navbar-toggler {
+    border-color: rgba(229, 9, 20, .7);
+  }
+
+  .navbar-toggler:focus {
+    box-shadow: 0 0 0 .2rem rgba(229, 9, 20, .28);
+  }
+
+  .navbar-toggler-icon {
+    background-image: linear-gradient(var(--nf-red), var(--nf-red)), linear-gradient(var(--nf-red), var(--nf-red)), linear-gradient(var(--nf-red), var(--nf-red));
+    background-position: center 2px, center 8px, center 14px;
+    background-size: 100% 2px;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
