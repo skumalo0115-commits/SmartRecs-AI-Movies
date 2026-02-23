@@ -146,10 +146,10 @@ TRAILER_MAP = {
     "dune": "n9xhJrPXop4",
     "spider-man: into the spider-verse": "g4Hbz2jLxvQ",
     "the grand budapest hotel": "1Fg5iWmQjwk",
-    "her": "WzV6mXIOVl4",
+    "her": "ne6p6MfLBxc",
     "la la land": "0pdqf4P9MB8",
     "the lion king": "4sj1MT05lAA",
-    "gladiator": "owK1qxDselE",
+    "gladiator": "P5ieIbInFpg",
     "the silence of the lambs": "W6Mm8Sbe__o",
     "toy story": "v-PjgYDrg70",
     "se7en": "znmZoVkCjpI",
@@ -170,9 +170,10 @@ TRAILER_MAP = {
     "jurassic world rebirth": "jan5CFWs9ic",
     "mission: impossible - the final reckoning": "fsQgc9pCyDU",
     "tron: ares": "9KVG_X_7Naw",
-    "m3gan 2.0": "d9K6vPqkR8s",
+    "m3gan 2.0": "f03RGS8N7hM",
     "how to train your dragon": "22w7z_lT6YM",
 }
+
 
 EXACT_DESCRIPTIONS = {
     "inception": "A thief who steals corporate secrets through dream-sharing technology is tasked with planting an idea into a CEO's mind.",
