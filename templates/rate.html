@@ -24,8 +24,10 @@
     <article class="movie-card movie-card-rate">
       <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster" loading="lazy" decoding="async">
       <div class="movie-info">
-        <h5>{{ movie.clean_title }}</h5>
-        <p>{{ movie.pretty_genres }}</p>
+        <div class="movie-meta">
+          <h5>{{ movie.clean_title }}</h5>
+          <p>{{ movie.pretty_genres }}</p>
+        </div>
         <div class="movie-actions">
           <button class="btn btn-sm netflix-btn btn-outline" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Description</button>
         </div>

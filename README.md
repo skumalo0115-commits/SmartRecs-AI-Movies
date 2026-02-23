@@ -1,111 +1,85 @@
-# SmartRecs - AI Movie Recommendation Web App
+# 🎬 SmartRecs — AI Movie Recommendation Web App
 
-SmartRecs is a production-ready Flask web application that delivers personalized movie recommendations using a **hybrid recommender system** combining content-based and collaborative filtering.
+![SmartRecs Hero](static/images/hero-bg.jpg)
 
-## Architecture Overview
+SmartRecs is a Flask web app that helps users rate movies and get personalized recommendations using a hybrid ML engine (content-based + collaborative filtering).
 
-SmartRecs uses a layered architecture:
+## ✨ Features
+- 🔐 User auth (register/login/logout)
+- ⭐ Rate movies with 1–5 stars
+- 🤖 Hybrid recommendations tailored per user
+- 🎞️ Movie details with genre, year, and trailer modal
+- 🔎 Search + filter on Rate and Recommendations pages
+- 🌙 Clean dark UI
 
-1. **Presentation Layer (Flask + Bootstrap 5)**
-   - Templates render Dashboard, Rate Movies, and Recommendations pages.
-   - Dark modern UI with responsive components.
-2. **Application Layer (Flask routes in `app.py`)**
-   - Handles auth, sessions, rating submissions, and recommendation requests.
-3. **Recommendation Engine (`recommender.py`)**
-   - Generates recommendations using hybrid ML logic.
-4. **Data Layer (SQLite + CSV seed data)**
-   - SQLite stores users and user-submitted ratings.
-   - CSV data seeds movie metadata and baseline collaborative ratings.
-
-### Diagram explanation (textual)
-
-- User interacts with Browser UI.
-- Browser sends requests to Flask routes.
-- Flask authenticates session and reads/writes SQLite data.
-- Flask calls `SmartRecommender`.
-- Recommender loads movies and ratings, computes hybrid scores, returns Top 10.
-- Flask renders ranked recommendations back to browser.
-
-## Machine Learning Explanation
-
-### 1) Content-Based Filtering
-- Uses `TfidfVectorizer` on movie genre strings.
-- Converts each movie to a TF-IDF vector.
-- Computes `cosine_similarity` between user-rated movies and all movies.
-- Weights similarity by normalized user ratings.
-
-### 2) Collaborative Filtering
-- Builds a user-item matrix from ratings.
-- Computes cosine similarity between users.
-- Predicts unseen movie preference based on weighted neighbor ratings.
-
-### 3) Hybrid Filtering
-Final score blends both approaches equally:
+## 🧠 How recommendations work
+1. **Content-based filtering**: TF-IDF on genres + cosine similarity.
+2. **Collaborative filtering**: user-user similarity from ratings matrix.
+3. **Hybrid score**:
 
 ```text
 final_score = 0.5 * content_score + 0.5 * collaborative_score
 ```
 
-This balances genre affinity (content) with crowd behavior (collaborative).
+## 🏗️ Tech stack
+- **Backend**: Flask
+- **ML/Data**: pandas, numpy, scikit-learn
+- **DB**: SQLite
+- **Frontend**: Jinja templates + Bootstrap + custom CSS
+- **Prod server**: gunicorn
 
-## Security
+## 📁 Project structure
+```text
+SmartRecs-AI-Movies/
+├── app.py
+├── recommender.py
+├── models.py
+├── requirements.txt
+├── Procfile
+├── railway.toml
+├── data/
+├── static/
+│   ├── css/style.css
+│   └── images/
+└── templates/
+```
 
-- Passwords are hashed using `werkzeug.security.generate_password_hash`.
-- Login verification uses `check_password_hash`.
-- Session-based authentication secures protected routes.
-- No plain text passwords are stored.
-
-## Ethical AI Considerations
-
-- **Bias awareness**: recommendations may reflect skewed source ratings.
-- **Cold-start transparency**: new users initially receive weaker personalization.
-- **Explainability**: genre and score display helps users understand outputs.
-- **Privacy**: only essential user data (username + hashed password + ratings) is stored.
-
-## Local Setup
-
+## 🚀 Run locally
 ```bash
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python app.py
 ```
-
 Open: `http://127.0.0.1:5000`
 
-## Deployment on Render
+## 🌐 Deploy to Railway (recommended, easiest)
+Railway is a very easy option for this Flask project and is already prepared in this repo (`Procfile` + `railway.toml`).
 
-1. Push project to GitHub.
-2. Create a new **Web Service** on Render.
-3. Configure:
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:app`
-4. Add env var:
-   - `SECRET_KEY=<strong-random-value>`
-5. Ensure persistent disk or bootstrap DB on startup for SQLite file.
+### 👶 Baby steps
+1. Push this repo to GitHub.
+2. Go to Railway → **New Project** → **Deploy from GitHub Repo**.
+3. Select this repo.
+4. In Railway Variables, add:
+   - `SECRET_KEY` = a long random string
+   - *(optional)* `TMDB_API_KEY`
+   - *(optional)* `OMDB_API_KEY`
+5. Railway will auto-build using `requirements.txt`.
+6. Railway will start app using:
+   - `gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120`
+7. Open generated Railway domain 🎉
 
-## Project Structure
+## 🟢 If you want an alternative
+**Render** is also simple:
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app --bind 0.0.0.0:$PORT`
+- Add `SECRET_KEY` env var
 
-```text
-/SmartRecs
-    app.py
-    recommender.py
-    models.py
-    requirements.txt
-    README.md
-    /data
-        movies.csv
-        ratings.csv
-    /static
-        /css
-            style.css
-        /images
-            hero-bg.jpg
-    /templates
-        base.html
-        dashboard.html
-        login.html
-        register.html
-        rate.html
-        recommendations.html
-```
+## 🔒 Security notes
+- Passwords are hashed (`werkzeug.security`).
+- Session-based route protection is enabled.
+- Set a strong `SECRET_KEY` in production.
+
+
+---
+Made with ❤️ + 🍿 by SmartRecs.
