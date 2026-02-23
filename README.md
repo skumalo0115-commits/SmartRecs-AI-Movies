@@ -1,6 +1,6 @@
 # 🎬 SmartRecs — AI Movie Recommendation Web App
 
-![SmartRecs Hero](static/images/hero-bg.jpg)
+![SmartRecs Login Preview](static/images/readme-auth.svg)
 
 SmartRecs is a Flask web app that helps users rate movies and get personalized recommendations using a hybrid ML engine (content-based + collaborative filtering).
 
