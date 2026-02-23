@@ -65,6 +65,13 @@ POSTER_MAP = {
     "inside out": "https://image.tmdb.org/t/p/w500/2H1TmgdfNtsKlU9jKdeNyYL5y8T.jpg",
     "a quiet place": "https://image.tmdb.org/t/p/w500/nAU74GmpUk7t5iklEp3bufwDq4n.jpg",
     "everything everywhere all at once": "https://image.tmdb.org/t/p/w500/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
+    "superman": "https://image.tmdb.org/t/p/w500/ombsmhYUqR4qqOLOxAyr5V8hbyv.jpg",
+    "the fantastic four: first steps": "https://image.tmdb.org/t/p/w500/x26MtUlwtWD26d0G0FXcppxCJio.jpg",
+    "jurassic world rebirth": "https://image.tmdb.org/t/p/w500/q0fGCmjLu42MPlSO9OYWpI5w86I.jpg",
+    "mission: impossible - the final reckoning": "https://image.tmdb.org/t/p/w500/z53D72EAOxGRqdr7KXXWp9dJiDe.jpg",
+    "tron: ares": "https://image.tmdb.org/t/p/w500/vnVG5v8R0ahO08B7WlOt4P8tAHW.jpg",
+    "m3gan 2.0": "https://image.tmdb.org/t/p/w500/4a63rQqIDTrYNdcnTXdPsQyxVLo.jpg",
+    "how to train your dragon": "https://image.tmdb.org/t/p/w500/q5pXRYTycaeW6dEgsCrd4mYPmxM.jpg",
 }
 
 YEAR_MAP = {
@@ -108,6 +115,13 @@ YEAR_MAP = {
     "inside out": "2015",
     "a quiet place": "2018",
     "everything everywhere all at once": "2022",
+    "superman": "2025",
+    "the fantastic four: first steps": "2025",
+    "jurassic world rebirth": "2025",
+    "mission: impossible - the final reckoning": "2025",
+    "tron: ares": "2025",
+    "m3gan 2.0": "2025",
+    "how to train your dragon": "2025",
 }
 
 TRAILER_MAP = {
@@ -150,7 +164,14 @@ TRAILER_MAP = {
     "the imitation game": "nuPZUUED5uk",
     "inside out": "seMwpP0yeu4",
     "a quiet place": "WR7cc5t7tv8",
-    "everything everywhere all at once": "wxN1T1uxQ2g",
+        "everything everywhere all at once": "wxN1T1uxQ2g",
+    "superman": "uhUht6vAsMY",
+    "the fantastic four: first steps": "pAsmrKyMqaA",
+    "jurassic world rebirth": "jan5CFWs9ic",
+    "mission: impossible - the final reckoning": "fsQgc9pCyDU",
+    "tron: ares": "9KVG_X_7Naw",
+    "m3gan 2.0": "d9K6vPqkR8s",
+    "how to train your dragon": "22w7z_lT6YM",
 }
 
 EXACT_DESCRIPTIONS = {
@@ -194,6 +215,13 @@ EXACT_DESCRIPTIONS = {
     "inside out": "A young girl's emotions navigate upheaval after her family moves to a new city.",
     "a quiet place": "A family must live in silence to avoid deadly creatures that hunt by sound.",
     "everything everywhere all at once": "A laundromat owner is pulled into a multiverse-spanning battle tied to family and identity.",
+    "superman": "Clark Kent embraces both his Kryptonian heritage and human upbringing as he rises as Earth's hopeful protector.",
+    "the fantastic four: first steps": "Marvel's first family gains extraordinary powers and faces a cosmic threat that tests their bond.",
+    "jurassic world rebirth": "A new expedition enters dinosaur territory, where survival depends on outsmarting apex predators.",
+    "mission: impossible - the final reckoning": "Ethan Hunt faces his most dangerous mission yet as global stakes and personal costs collide.",
+    "tron: ares": "A powerful program crosses into the real world, pulling humanity into a battle between code and control.",
+    "m3gan 2.0": "The deadly AI doll returns in an upgraded form, blurring the line between protection and obsession.",
+    "how to train your dragon": "A young Viking and a wounded dragon forge an unlikely friendship that transforms their world.",
 }
 
 DEFAULT_DESCRIPTIONS = {
