@@ -659,3 +659,37 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   margin-bottom: 0;
   line-height: 1;
 }
+
+.hero-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  flex-wrap: wrap;
+}
+
+.reset-ratings-form {
+  margin: 0;
+}
+
+.stream-label {
+  color: var(--nf-red);
+}
+
+.stream-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-left: .35rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #fff;
+  background: var(--nf-red);
+  box-shadow: 0 0 14px rgba(229, 9, 20, .72);
+}
+
+.stream-play-btn:hover {
+  color: #fff;
+  transform: translateY(-1px);
+}

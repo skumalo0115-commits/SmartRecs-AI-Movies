@@ -4,12 +4,17 @@
   <div class="container hero-content-wrap hero-intro-block">
     <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
     <p>Your movie night dashboard with AI-personalized picks.</p>
-    <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
+    <div class="hero-action-buttons">
+      <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
+      <form method="post" action="{{ url_for('reset_ratings') }}" class="reset-ratings-form">
+        <button type="submit" class="btn btn-success">Reset</button>
+      </form>
+    </div>
 
     <div class="row g-3 hero-stats">
       <div class="col-md-4"><div class="nf-stat stat-float"><span>Movies Rated</span><strong>{{ rating_count }}</strong></div></div>
-      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-1"><span>Top Genre</span><strong>{{ top_genre }}</strong></div></div>
-      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-2"><span>Match Score</span><strong>{{ score_pct }}%</strong></div></div>
+      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-1"><span>Top Genre</span><strong>{{ top_genre if rating_count else "" }}</strong></div></div>
+      <div class="col-md-4"><div class="nf-stat stat-float stat-delay-2"><span>Match Score</span><strong>{{ (score_pct ~ "%") if rating_count else "" }}</strong></div></div>
     </div>
   </div>
 </section>
@@ -41,6 +46,11 @@
             <p><strong>Release date:</strong> {{ movie.release_date }}</p>
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
             <p class="movie-description"><strong>Description:</strong> {{ movie.description }}</p>
+            <p><strong class="stream-label">Stream:</strong>
+              <a href="https://cineb.gg/" target="_blank" rel="noopener noreferrer" class="stream-play-btn" aria-label="Stream {{ movie.clean_title }} on cineb">
+                <i class="bi bi-play-fill"></i>
+              </a>
+            </p>
 
             <p class="text-danger fw-bold">Match Score: {{ '%.2f'|format(movie.score) }}</p>
             {% if movie.trailer_embed_url %}

@@ -499,6 +499,22 @@ def get_recommendations(user_id: int):
     return _cached_recommendations(user_id, _ratings_signature(user_id))
 
 
+def get_user_rated_movies(user_id: int) -> list[dict]:
+    rated_rows = fetch_all("SELECT movie_id, rating FROM user_ratings WHERE user_id = ?", (user_id,))
+    if not rated_rows:
+        return []
+
+    rating_map = {row["movie_id"]: row["rating"] for row in rated_rows}
+    rated_movies = movies_df[movies_df["movie_id"].isin(rating_map.keys())].to_dict(orient="records")
+    detailed_movies = []
+    for movie in rated_movies:
+        movie_detail = movie_with_details(movie)
+        movie_detail["user_rating"] = rating_map.get(movie["movie_id"])
+        movie_detail["is_rated"] = True
+        detailed_movies.append(movie_detail)
+    return detailed_movies
+
+
 @app.route("/rate", methods=["GET", "POST"])
 def rate_movies():
     user_id = current_user_id()
@@ -525,9 +541,15 @@ def rate_movies():
     year = request.args.get("year", "")
     genre = request.args.get("genre", "")
 
-    rated_ids = {r["movie_id"] for r in fetch_all("SELECT movie_id FROM user_ratings WHERE user_id = ?", (user_id,))}
-    unrated = movies_df[~movies_df["movie_id"].isin(rated_ids)].to_dict(orient="records")
-    detailed_movies = [movie_with_details(movie) for movie in unrated]
+    rated_rows = fetch_all("SELECT movie_id, rating FROM user_ratings WHERE user_id = ?", (user_id,))
+    rating_map = {row["movie_id"]: row["rating"] for row in rated_rows}
+    all_movies = movies_df.to_dict(orient="records")
+    detailed_movies = []
+    for movie in all_movies:
+        movie_detail = movie_with_details(movie)
+        movie_detail["user_rating"] = rating_map.get(movie["movie_id"])
+        detailed_movies.append(movie_detail)
+
     filtered_movies = filter_movies(detailed_movies, search, year, genre)
     return render_template("rate.html", movies=filtered_movies, active_tab="rate", search=search, year=year, genre=genre)
 
@@ -543,7 +565,18 @@ def recommendations():
     genre = request.args.get("genre", "")
 
     recommendations_list = get_recommendations(user_id)
-    filtered_recommendations = filter_movies(recommendations_list, search, year, genre)
+    rated_movies = get_user_rated_movies(user_id)
+
+    merged_recommendations = list(recommendations_list)
+    rec_ids = {movie["movie_id"] for movie in merged_recommendations}
+    for movie in rated_movies:
+        if movie["movie_id"] not in rec_ids:
+            movie["score"] = 0
+            merged_recommendations.append(movie)
+
+    filtered_recommendations = filter_movies(merged_recommendations, search, year, genre)
+
+    has_ratings = bool(fetch_one("SELECT 1 FROM user_ratings WHERE user_id = ? LIMIT 1", (user_id,)))
 
     return render_template(
         "recommendations.html",
@@ -552,7 +585,20 @@ def recommendations():
         search=search,
         year=year,
         genre=genre,
+        has_ratings=has_ratings,
     )
+
+
+@app.route("/reset-ratings", methods=["POST"])
+def reset_ratings():
+    user_id = current_user_id()
+    if not user_id:
+        return redirect(url_for("login"))
+
+    execute("DELETE FROM user_ratings WHERE user_id = ?", (user_id,))
+    _cached_recommendations.cache_clear()
+    flash("All ratings were reset.", "success")
+    return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":
