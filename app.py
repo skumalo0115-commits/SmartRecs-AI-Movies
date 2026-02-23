@@ -134,7 +134,6 @@ TRAILER_MAP = {
     "the prestige": "RLtaA9fFNXU",
     "blade runner 2049": "gCcx85zbxz4",
     "guardians of the galaxy": "d96cjJhvlMA",
-    "shutter island": "5iaYLCiq5RM",
     "mad max: fury road": "hEJnMQG9ev8",
     "the shawshank redemption": "PLl99DlL6b4",
     "pulp fiction": "s7EdQ4FqbhY",
@@ -297,7 +296,10 @@ def movie_with_details(movie: dict) -> dict:
 )
     
     trailer_id = TRAILER_MAP.get(lower_title)
-    fallback_query = quote_plus(f"{clean_title} official trailer")
+    trailer_search_query = TRAILER_SEARCH_QUERY_MAP.get(
+        lower_title, f"{clean_title} official trailer"
+    )
+    fallback_query = quote_plus(trailer_search_query)
 
     movie_copy["clean_title"] = clean_title
     movie_copy["year"] = resolved_year
