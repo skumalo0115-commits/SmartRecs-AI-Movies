@@ -74,6 +74,56 @@ POSTER_MAP = {
     "how to train your dragon": "https://image.tmdb.org/t/p/w500/q5pXRYTycaeW6dEgsCrd4mYPmxM.jpg",
 }
 
+STREAM_URL_MAP = {
+    "parasite": "https://moviesjoy.plus/watch-movie/watch-parasite-41796.5396155",
+    "inception": "https://moviesjoy.plus/watch-movie/watch-inception-19764.5297266",
+    "interstellar": "https://moviesjoy.plus/watch-movie/watch-interstellar-19788.5297302",
+    "the matrix": "https://moviesjoy.plus/watch-movie/watch-the-matrix-19724.5349115",
+    "the dark knight": "https://moviesjoy.plus/movie/watch-the-dark-knight-19752",
+    "arrival": "https://moviesjoy.plus/watch-movie/watch-arrival-19619.5297545",
+    "avatar": "https://moviesjoy.plus/watch-movie/watch-avatar-19690.5297449",
+    "the prestige": "https://moviesjoy.plus/watch-movie/watch-the-prestige-19347.5298013",
+    "blade runner 2049": "https://moviesjoy.plus/watch-movie/watch-blade-runner-2049-19739.5352040",
+    "guardians of the galaxy": "https://moviesjoy.plus/watch-movie/watch-guardians-of-the-galaxy-19781.5297278",
+    "shutter island": "https://moviesjoy.plus/watch-movie/watch-shutter-island-19490.5349259",
+    "mad max: fury road": "https://moviesjoy.plus/watch-movie/watch-mad-max-fury-road-19677.5349145",
+    "the shawshank redemption": "https://moviesjoy.plus/watch-movie/watch-the-shawshank-redemption-19679.5349142",
+    "pulp fiction": "https://moviesjoy.plus/watch-movie/watch-pulp-fiction-19700.5349121",
+    "the godfather": "https://moviesjoy.plus/watch-movie/watch-the-godfather-19629.5297527",
+    "whiplash": "https://moviesjoy.plus/watch-movie/watch-whiplash-19644.5297482",
+    "the lord of the rings: the fellowship of the ring": "https://moviesjoy.plus/watch-movie/watch-the-lord-of-the-rings-the-fellowship-of-the-ring-19736.5297329",
+    "the social network": "https://moviesjoy.plus/watch-movie/watch-the-social-network-18956.5298736",
+    "dune": "https://moviesjoy.plus/watch-movie/watch-dune-6752.4792159",
+    "spider-man: into the spider-verse": "https://moviesjoy.plus/watch-movie/watch-spiderman-into-the-spiderverse-19847.5349001",
+    "the grand budapest hotel": "https://moviesjoy.plus/watch-movie/watch-the-grand-budapest-hotel-19149.5349511",
+    "her": "https://moviesjoy.plus/watch-movie/watch-her-19467.5352079",
+    "la la land": "https://moviesjoy.plus/watch-movie/watch-la-la-land-19613.5297566",
+    "the lion king": "https://moviesjoy.plus/watch-movie/watch-the-lion-king-19472.5297812",
+    "gladiator": "https://moviesjoy.plus/watch-movie/watch-gladiator-19456.5297824",
+    "the silence of the lambs": "https://moviesjoy.plus/watch-movie/watch-the-silence-of-the-lambs-8603.5308291",
+    "toy story": "https://moviesjoy.plus/watch-movie/watch-toy-story-19538.5349217",
+    "se7en": "https://moviesjoy.plus/watch-movie/watch-se7en-19726.5349019",
+    "the truman show": "https://moviesjoy.plus/watch-movie/watch-the-truman-show-19142.5298358",
+    "the departed": "https://moviesjoy.plus/watch-movie/watch-the-departed-19229.5298256",
+    "black panther": "https://moviesjoy.plus/watch-movie/watch-black-panther-19797.5297200",
+    "coco": "https://moviesjoy.plus/watch-movie/watch-coco-19597.5297596",
+    "ford v ferrari": "https://moviesjoy.plus/watch-movie/watch-ford-v-ferrari-41453.5402800",
+    "knives out": "https://moviesjoy.plus/watch-movie/watch-knives-out-272.5404816",
+    "the martian": "https://moviesjoy.plus/watch-movie/watch-the-martian-19709.5297428",
+    "no country for old men": "https://moviesjoy.plus/watch-movie/watch-no-country-for-old-men-19192.5349418",
+    "the imitation game": "https://moviesjoy.plus/watch-movie/watch-the-imitation-game-19720.5297398",
+    "inside out": "https://moviesjoy.plus/watch-movie/watch-inside-out-19725.5349040",
+    "a quiet place": "https://moviesjoy.plus/watch-movie/watch-a-quiet-place-19740.5297305",
+    "everything everywhere all at once": "https://moviesjoy.plus/watch-movie/watch-everything-everywhere-all-at-once-78619.8215627",
+    "superman": "https://moviesjoy.plus/watch-movie/watch-superman-127954.12428398",
+    "the fantastic four: first steps": "https://moviesjoy.plus/watch-movie/watch-the-fantastic-four-first-steps-128755.12463165",
+    "jurassic world rebirth": "https://moviesjoy.plus/watch-movie/watch-jurassic-world-rebirth-127591.12414766",
+    "mission: impossible - the final reckoning": "https://moviesjoy.plus/watch-movie/watch-mission-impossible-the-final-reckoning-125446.11146918",
+    "tron: ares": "https://moviesjoy.plus/watch-movie/watch-tron-ares-135016.12704911",
+    "m3gan 2.0": "https://moviesjoy.plus/watch-movie/watch-m3gan-20-127423.12406150",
+    "how to train your dragon": "https://moviesjoy.plus/watch-movie/watch-how-to-train-your-dragon-126679.12370606",
+}
+
 YEAR_MAP = {
     "inception": "2010",
     "interstellar": "2014",
@@ -318,6 +368,7 @@ def movie_with_details(movie: dict) -> dict:
         if trailer_id
         else f"https://www.youtube.com/embed?listType=search&list={fallback_query}"
     )
+    movie_copy["stream_url"] = STREAM_URL_MAP.get(lower_title, "https://moviesjoy.plus/")
     return movie_copy
 
 

@@ -60,7 +60,7 @@
             <p><strong>Genre:</strong> {{ movie.pretty_genres }}</p>
             <p class="movie-description cool-description"><strong>Description:</strong> {{ movie.description }}</p>
             <p><strong class="stream-label">Stream:</strong>
-              <a href="https://moviesjoy.plus/" target="_blank" rel="noopener noreferrer" class="stream-play-btn" aria-label="Stream {{ movie.clean_title }} on MoviesJoy">
+              <a href="{{ movie.stream_url }}" target="_blank" rel="noopener noreferrer" class="stream-play-btn" aria-label="Stream {{ movie.clean_title }} on MoviesJoy">
                 <i class="bi bi-play-fill"></i>
               </a>
             </p>
