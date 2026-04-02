@@ -12,6 +12,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   transition: opacity .25s ease, transform .25s ease;
 }
+body.auth-modal-open .page-stage {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
 
 body.page-leave { opacity: .25; transform: translateY(6px); }
 .page-stage { animation: pageEnter .45s ease; min-height: 78vh; }
@@ -517,6 +522,36 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 .auth-form-card .netflix-input::placeholder {
   color: #5a5a5a;
   opacity: 1;
+}
+
+.guest-auth-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+.guest-auth-modal.show {
+  display: flex;
+}
+.guest-auth-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 4, 12, 0.66);
+  backdrop-filter: blur(3px);
+}
+.guest-auth-card {
+  position: relative;
+  z-index: 1;
+}
+.guest-auth-card .auth-logo {
+  font-size: 2.3rem;
+  text-align: center;
+}
+.guest-auth-card .auth-tagline {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 /* modal metadata row consistency */
