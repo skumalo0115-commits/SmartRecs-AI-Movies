@@ -407,20 +407,21 @@ def load_app_ratings() -> pd.DataFrame:
 
 @app.route("/")
 def index():
-    if current_user_id():
-        return redirect(url_for("dashboard"))
-    return redirect(url_for("login"))
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if current_user_id():
+        return redirect(url_for("dashboard"))
+
     if request.method == "POST":
         username = request.form["username"].strip().lower()
         email = request.form.get("email", "").strip().lower() or None
         password = request.form["password"]
         if len(password) < 8:
             flash("Password must be at least 8 characters.", "danger")
-            return render_template("register.html", auth_mode="register", auth_page=True)
+            return redirect(url_for("dashboard", auth="register"))
 
         existing_user = fetch_one(
             "SELECT id FROM users WHERE username = ? OR (email IS NOT NULL AND email = ?)",
@@ -428,7 +429,7 @@ def register():
         )
         if existing_user:
             flash("Account already exists. Please sign in instead.", "warning")
-            return redirect(url_for("login", mode="login"))
+            return redirect(url_for("dashboard", auth="login"))
 
         password_hash = generate_password_hash(password)
         try:
@@ -442,13 +443,16 @@ def register():
             return redirect(url_for("dashboard"))
         except Exception:
             flash("Username already exists.", "danger")
+            return redirect(url_for("dashboard", auth="register"))
 
-    mode = request.args.get("mode") or ("register" if request.method == "POST" else None)
-    return render_template("register.html", auth_mode=mode, auth_page=True)
+    return redirect(url_for("dashboard", auth="register"))
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user_id():
+        return redirect(url_for("dashboard"))
+
     if request.method == "POST":
         identity = request.form["identity"].strip().lower()
         password = request.form["password"]
@@ -465,27 +469,28 @@ def login():
             return redirect(url_for("dashboard"))
 
         flash("Invalid credentials.", "danger")
+        return redirect(url_for("dashboard", auth="login"))
 
-    mode = request.args.get("mode") or ("login" if request.method == "POST" else None)
-    return render_template("login.html", auth_mode=mode, auth_page=True)
+    return redirect(url_for("dashboard", auth="login"))
 
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     user_id = current_user_id()
     if not user_id:
-        return redirect(url_for("login"))
+        flash("Please sign in to open your profile.", "warning")
+        return redirect(url_for("dashboard", auth="login"))
 
     user = fetch_one("SELECT id, username, email, password_hash FROM users WHERE id = ?", (user_id,))
     if not user:
         session.clear()
-        return redirect(url_for("login"))
+        return redirect(url_for("dashboard", auth="login"))
 
     if request.method == "POST":
         new_username = request.form["username"].strip().lower()
@@ -516,32 +521,46 @@ def profile():
 @app.route("/dashboard")
 def dashboard():
     user_id = current_user_id()
-    if not user_id:
-        return redirect(url_for("login"))
+    auth_mode = request.args.get("auth")
 
-    ratings = fetch_all("SELECT movie_id, rating FROM user_ratings WHERE user_id = ?", (user_id,))
-    rating_count = len(ratings)
-
+    rating_count = 0
     top_genre = "N/A"
     score_pct = 0
-    if ratings:
-        rated_movie_ids = [r["movie_id"] for r in ratings]
-        rated_movies = movies_df[movies_df["movie_id"].isin(rated_movie_ids)]
-        genre_counter = Counter()
-        for genre_str in rated_movies["genres"]:
-            for genre in genre_str.split("|"):
-                genre_counter[genre] += 1
-        if genre_counter:
-            top_genre = genre_counter.most_common(1)[0][0]
-        avg_rating = sum(r["rating"] for r in ratings) / rating_count
-        score_pct = int((avg_rating / 5.0) * 100)
+    recommendations = []
+
+    if user_id:
+        ratings = fetch_all("SELECT movie_id, rating FROM user_ratings WHERE user_id = ?", (user_id,))
+        rating_count = len(ratings)
+
+        if ratings:
+            rated_movie_ids = [r["movie_id"] for r in ratings]
+            rated_movies = movies_df[movies_df["movie_id"].isin(rated_movie_ids)]
+            genre_counter = Counter()
+            for genre_str in rated_movies["genres"]:
+                for genre in genre_str.split("|"):
+                    genre_counter[genre] += 1
+            if genre_counter:
+                top_genre = genre_counter.most_common(1)[0][0]
+            avg_rating = sum(r["rating"] for r in ratings) / rating_count
+            score_pct = int((avg_rating / 5.0) * 100)
+        recommendations = get_recommendations(user_id)
+    else:
+        auth_mode = auth_mode if auth_mode in {"login", "register"} else None
+        guest_movies = movies_df.head(12).to_dict(orient="records")
+        recommendations = []
+        for movie in guest_movies:
+            movie_detail = movie_with_details_cached(movie)
+            movie_detail["score"] = 0
+            recommendations.append(movie_detail)
 
     return render_template(
         "dashboard.html",
         rating_count=rating_count,
         top_genre=top_genre,
         score_pct=score_pct,
-        recommendations=get_recommendations(user_id),
+        recommendations=recommendations,
+        auth_mode=auth_mode,
+        is_guest=not bool(user_id),
         active_tab="dashboard",
     )
 
@@ -597,7 +616,8 @@ def get_user_rated_movies(user_id: int) -> list[dict]:
 def rate_movies():
     user_id = current_user_id()
     if not user_id:
-        return redirect(url_for("login"))
+        flash("Please sign in to rate movies.", "warning")
+        return redirect(url_for("dashboard", auth="login"))
 
     if request.method == "POST":
         movie_id = int(request.form["movie_id"])
@@ -636,7 +656,8 @@ def rate_movies():
 def recommendations():
     user_id = current_user_id()
     if not user_id:
-        return redirect(url_for("login"))
+        flash("Please sign in to view your list.", "warning")
+        return redirect(url_for("dashboard", auth="login"))
 
     search = request.args.get("search", "")
     year = request.args.get("year", "")
@@ -671,7 +692,8 @@ def recommendations():
 def reset_ratings():
     user_id = current_user_id()
     if not user_id:
-        return redirect(url_for("login"))
+        flash("Please sign in to reset ratings.", "warning")
+        return redirect(url_for("dashboard", auth="login"))
 
     execute("DELETE FROM user_ratings WHERE user_id = ?", (user_id,))
     _cached_recommendations.cache_clear()
