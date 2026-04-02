@@ -2,12 +2,12 @@
 {% block content %}
 <section class="netflix-hero dashboard-hero">
   <div class="container hero-content-wrap hero-intro-block">
-    <h1>{% if is_guest %}Welcome to SmartRecs{% else %}Welcome back, {{ session.get('username', 'Viewer')|title }}{% endif %}</h1>
-    <p>{% if is_guest %}Browse picks instantly. Sign in only when you want to interact.{% else %}Your movie night dashboard with AI-personalized picks.{% endif %}</p>
+    <h1>Welcome back, {{ session.get('username', 'Viewer')|title }}</h1>
+    <p>Your movie night dashboard with AI-personalized picks.</p>
     <div class="hero-action-buttons">
-      <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift {% if is_guest %}requires-auth{% endif %}" {% if is_guest %}data-requires-auth="true"{% endif %}>Rate Movies</a>
+      <a href="{{ url_for('rate_movies') }}" class="btn netflix-btn page-shift">Rate Movies</a>
       <form method="post" action="{{ url_for('reset_ratings') }}" class="reset-ratings-form">
-        <button type="submit" class="btn btn-success {% if is_guest %}requires-auth{% endif %}" {% if is_guest %}data-requires-auth="true"{% endif %}>Reset</button>
+        <button type="submit" class="btn btn-success">Reset</button>
       </form>
     </div>
 
@@ -28,14 +28,13 @@
       <div class="movie-info">
         <h5>{{ movie.clean_title }}</h5>
         <p>{{ movie.pretty_genres }}</p>
-        <p class="score-chip">{% if is_guest %}Sign in to unlock match score{% else %}Match {{ '%.2f'|format(movie.score) }}{% endif %}</p>
+        <p class="score-chip">Match {{ '%.2f'|format(movie.score) }}</p>
         <div class="movie-actions">
-          <button class="btn btn-sm netflix-btn {% if is_guest %}requires-auth{% endif %}" {% if is_guest %}data-requires-auth="true"{% else %}data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}"{% endif %}>View Details</button>
+          <button class="btn btn-sm netflix-btn" data-bs-toggle="modal" data-bs-target="#movieModal{{ movie.movie_id }}">View Details</button>
         </div>
       </div>
     </article>
 
-    {% if not is_guest %}
     <div class="modal fade" id="movieModal{{ movie.movie_id }}" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content netflix-modal">
@@ -66,61 +65,9 @@
         </div>
       </div>
     </div>
-    {% endif %}
     {% endfor %}
   </div>
 </section>
-
-{% if is_guest %}
-<div class="guest-auth-modal {% if auth_mode %}show{% endif %}" id="guestAuthModal" aria-hidden="{% if auth_mode %}false{% else %}true{% endif %}">
-  <div class="guest-auth-backdrop" data-close-auth-modal="true"></div>
-  <div class="guest-auth-card auth-form-card auth-form-card-enter">
-    <h1 class="auth-logo">SmartRecs <span class="popcorn-pop" aria-hidden="true">🍿</span></h1>
-    <p class="auth-tagline">Your next favorite movie is one click away.</p>
-    <h2 class="auth-form-title">{{ 'Register' if auth_mode == 'register' else 'Sign In' }}</h2>
-    {% if auth_mode == 'register' %}
-    <form method="post" action="{{ url_for('register') }}">
-      <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input name="username" class="form-control netflix-input" placeholder="John" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="email" name="email" class="form-control netflix-input" placeholder="name@email.com">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control netflix-input" placeholder="••••••••" required>
-      </div>
-      <button class="btn netflix-btn w-100">Register</button>
-    </form>
-    <div class="auth-switch-copy">
-      <span>Already have an account?</span>
-      <button type="button" class="btn btn-link auth-card-switch" data-open-auth-modal="login">Login</button>
-    </div>
-    {% else %}
-    <form method="post" action="{{ url_for('login') }}">
-      <div class="mb-3">
-        <label class="form-label">Username or Email</label>
-        <input name="identity" class="form-control netflix-input" placeholder="John or name@email.com" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control netflix-input" placeholder="••••••••" required>
-      </div>
-      <button class="btn netflix-btn w-100">Sign In</button>
-    </form>
-    <button type="button" class="btn btn-outline-light w-100 mt-2 google-btn-placeholder">
-      Continue with Google (Firebase)
-    </button>
-    <div class="auth-switch-copy">
-      <span>Don’t have an account?</span>
-      <button type="button" class="btn btn-link auth-card-switch" data-open-auth-modal="register">Register</button>
-    </div>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block footer %}

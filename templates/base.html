@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
-<body data-auth-required="{{ 'true' if is_guest else 'false' }}">
+<body>
   {% if session.get('user_id') %}
   <nav class="navbar navbar-expand-lg netflix-navbar">
     <div class="container">
@@ -121,50 +121,6 @@
         });
       });
     });
-
-    const authRequired = document.body.dataset.authRequired === 'true';
-    const guestAuthModal = document.getElementById('guestAuthModal');
-
-    const openGuestAuthModal = () => {
-      if (!guestAuthModal) return;
-      guestAuthModal.classList.add('show');
-      guestAuthModal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('auth-modal-open');
-    };
-
-    guestAuthModal?.querySelectorAll('[data-open-auth-modal]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const nextMode = btn.getAttribute('data-open-auth-modal');
-        const target = nextMode === 'register' ? '{{ url_for("dashboard", auth="register") }}' : '{{ url_for("dashboard", auth="login") }}';
-        window.location.href = target;
-      });
-    });
-
-    if (guestAuthModal && guestAuthModal.classList.contains('show')) {
-      document.body.classList.add('auth-modal-open');
-    }
-
-    guestAuthModal?.querySelectorAll('[data-close-auth-modal]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        guestAuthModal.classList.remove('show');
-        guestAuthModal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('auth-modal-open');
-      });
-    });
-
-    if (authRequired) {
-      document.addEventListener('click', (event) => {
-        const target = event.target.closest('a, button, input[type="submit"]');
-        if (!target) return;
-        if (target.closest('#guestAuthModal')) return;
-        if (target.hasAttribute('data-bs-dismiss')) return;
-        if (target.classList.contains('navbar-toggler')) return;
-        const isSafeClick = target.matches('[data-close-auth-modal], .google-btn-placeholder');
-        if (isSafeClick) return;
-        event.preventDefault();
-        openGuestAuthModal();
-      }, true);
-    }
   </script>
 </body>
 </html>
