@@ -47,17 +47,22 @@ SmartRecs-AI-Movies/
 └── templates/
 ```
 
-## 🚀 Run locally
-```bash
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
-Open: `http://127.0.0.1:5000`
+## Deployment
+SmartRecs is set up for hosted deployment on Vercel and Railway. The repo intentionally avoids container setup, local server instructions, and editor-specific settings.
 
-## 🌐 Deploy to Railway (recommended, easiest)
-Railway is a very easy option for this Flask project and is already prepared in this repo (`Procfile` + `railway.toml`).
+## Deploy to Railway
+Railway is prepared with `railway.toml` and `Procfile`.
+
+1. Push this repository to GitHub.
+2. Open Railway and choose **New Project**.
+3. Select **Deploy from GitHub repo**.
+4. Choose this repository.
+5. Add environment variables:
+   - `SECRET_KEY`: any long random string.
+   - `TMDB_API_KEY`: optional, for live TMDB lookups.
+   - `OMDB_API_KEY`: optional, for live OMDB lookups.
+6. Deploy the project.
+7. Open the Railway-generated domain.
 
 ## Deploy to Vercel
 This project is also prepared for Vercel using `vercel.json`. Vercel detects the Flask app from `app.py`, and static assets are stored in `public/static` so they can be served from Vercel's public asset pipeline.

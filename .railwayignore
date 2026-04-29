@@ -6,7 +6,6 @@ __pycache__/
 *.pyo
 *.pyd
 .git/
-.vscode/
 .env
 .env.*
 *.db
