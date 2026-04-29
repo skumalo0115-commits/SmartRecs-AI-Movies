@@ -27,6 +27,18 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
 
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+}
+
+.brand-mark,
+.auth-logo-icon {
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(229, 9, 20, .35);
+}
+
 .netflix-link {
   color: #fff;
   font-weight: 600;
@@ -64,7 +76,16 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 
 .auth-overlay { position: absolute; inset: 0; background: radial-gradient(circle at top, rgba(181,92,255,.18), transparent 55%); }
 .auth-content { text-align: center; z-index: 1; }
-.auth-logo { color: var(--nf-red); font-size: 4rem; font-weight: 900; text-shadow: 0 0 20px rgba(229,9,20,.4); }
+.auth-logo {
+  color: var(--nf-red);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  font-size: 4rem;
+  font-weight: 900;
+  text-shadow: 0 0 20px rgba(229,9,20,.4);
+}
 .auth-tagline { font-size: 1.1rem; margin-bottom: 1.7rem; }
 .auth-actions { display: flex; justify-content: center; gap: 1rem; }
 .auth-enter { animation: authEnter .6s ease; }
@@ -196,6 +217,7 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
 
 @media (max-width: 576px) {
   .auth-logo { font-size: 2.7rem; }
+  .auth-logo-icon { width: 44px; height: 44px; }
   .star-action-row { justify-content: center; }
 
 }

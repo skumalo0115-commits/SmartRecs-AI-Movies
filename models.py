@@ -1,21 +1,33 @@
 """Database models and helpers for SmartRecs."""
 from __future__ import annotations
 
+import os
+import shutil
 import sqlite3
+import tempfile
 from pathlib import Path
 from typing import Any
 
-DB_PATH = Path("data/smartrecs.db")
+LOCAL_DB_PATH = Path("data/smartrecs.db")
+DB_PATH = Path(tempfile.gettempdir()) / "smartrecs.db" if os.getenv("VERCEL") else LOCAL_DB_PATH
+
+
+def ensure_db_path() -> None:
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if DB_PATH.exists() or DB_PATH == LOCAL_DB_PATH or not LOCAL_DB_PATH.exists():
+        return
+    shutil.copyfile(LOCAL_DB_PATH, DB_PATH)
 
 
 def get_connection() -> sqlite3.Connection:
+    ensure_db_path()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
 def init_db() -> None:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    ensure_db_path()
     with get_connection() as conn:
         conn.execute(
             """

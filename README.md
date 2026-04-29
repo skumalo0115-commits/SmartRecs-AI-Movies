@@ -1,6 +1,6 @@
 # 🎬 SmartRecs — AI Movie Recommendation Web App
 
-![SmartRecs Login Preview](static/images/smartrec.jpg)
+![SmartRecs Login Preview](public/static/images/smartrec.jpg)
 
 Built SmartRecs AI Movies, an AI-powered full-stack web app that personalizes movie recommendations based on user ratings and preference patterns.
 The platform includes user authentication, rating workflows, dynamic filtering, rich movie detail modals, and responsive mobile-first UI improvements.
@@ -40,9 +40,10 @@ SmartRecs-AI-Movies/
 ├── Procfile
 ├── railway.toml
 ├── data/
-├── static/
-│   ├── css/style.css
-│   └── images/
+├── public/
+│   └── static/
+│       ├── css/style.css
+│       └── images/
 └── templates/
 ```
 
@@ -57,6 +58,23 @@ Open: `http://127.0.0.1:5000`
 
 ## 🌐 Deploy to Railway (recommended, easiest)
 Railway is a very easy option for this Flask project and is already prepared in this repo (`Procfile` + `railway.toml`).
+
+## Deploy to Vercel
+This project is also prepared for Vercel using `vercel.json`. Vercel detects the Flask app from `app.py`, and static assets are stored in `public/static` so they can be served from Vercel's public asset pipeline.
+
+1. Push this repository to GitHub.
+2. Go to <https://vercel.com/new>.
+3. Import the GitHub repository.
+4. Set **Framework Preset** to `Flask` if Vercel does not auto-detect it.
+5. Keep the root directory as the repository root.
+6. Add environment variables in Vercel Project Settings:
+   - `SECRET_KEY`: any long random string.
+   - `TMDB_API_KEY`: optional, for live TMDB lookups.
+   - `OMDB_API_KEY`: optional, for live OMDB lookups.
+7. Click **Deploy**.
+8. After deployment, open the generated Vercel URL and confirm the SmartRecs icon appears in the browser tab.
+
+Note: Vercel Functions use a read-only project filesystem. The app uses `/tmp` for SQLite on Vercel so the demo can run, but `/tmp` is not permanent storage. Use a hosted database for production user accounts and ratings.
 
 ---
 Made with ❤️ + 🍿 by SmartRecs.

@@ -3,7 +3,10 @@
 <section class="auth-screen">
   <div class="auth-overlay"></div>
   <div class="auth-content container {% if not auth_mode %}auth-enter{% endif %}">
-    <h1 class="auth-logo">SmartRecs <span class="popcorn-pop" aria-hidden="true">🍿</span></h1>
+    <h1 class="auth-logo">
+      <img class="auth-logo-icon" src="{{ url_for('static', filename='images/smartrecs-icon.svg') }}" alt="" width="58" height="58">
+      SmartRecs
+    </h1>
     <p class="auth-tagline auth-tagline-swoop">Your next favorite movie is one click away.</p>
 
     {% if not auth_mode %}

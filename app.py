@@ -15,7 +15,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from models import execute, fetch_all, fetch_one, init_db
 from recommender import SmartRecommender
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public/static", static_url_path="/static")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-this-in-production")
 
 init_db()
@@ -677,6 +677,11 @@ def reset_ratings():
     _cached_recommendations.cache_clear()
     flash("All ratings were reset.", "success")
     return redirect(url_for("dashboard"))
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return redirect(url_for("static", filename="images/smartrecs-icon.svg"), code=307)
 
 
 if __name__ == "__main__":

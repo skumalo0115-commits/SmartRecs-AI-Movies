@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">SmartRecs</title>
+  <desc id="desc">A movie recommendation play badge with connected rating points.</desc>
+  <defs>
+    <linearGradient id="badge" x1="9" y1="9" x2="55" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff3b45"/>
+      <stop offset="0.58" stop-color="#e50914"/>
+      <stop offset="1" stop-color="#8a2be2"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="19" y1="13" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#0b0c10"/>
+  <rect x="7" y="8" width="50" height="48" rx="13" fill="url(#badge)"/>
+  <path d="M17 20h30" stroke="#ffffff" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round"/>
+  <path d="M27 22.5v19l16-9.5-16-9.5Z" fill="#ffffff"/>
+  <path d="M17 46.5h30" stroke="#ffd166" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="17" cy="46.5" r="4" fill="#ffd166"/>
+  <circle cx="32" cy="46.5" r="4" fill="#ffffff"/>
+  <circle cx="47" cy="46.5" r="4" fill="#ffd166"/>
+  <path d="M16 17c7-5.5 22-6.5 34 2" fill="none" stroke="url(#shine)" stroke-width="3" stroke-linecap="round"/>
+</svg>
