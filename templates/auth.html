@@ -1,79 +1,144 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="auth-screen">
-  <div class="auth-overlay"></div>
-  <div class="auth-content container {% if not auth_mode %}auth-enter{% endif %}">
-    <h1 class="auth-logo">
-      <img class="auth-logo-icon" src="{{ url_for('static', filename='images/smartrecs-icon.svg') }}" alt="" width="58" height="58">
-      SmartRecs
-    </h1>
-    <p class="auth-tagline auth-tagline-swoop">Your next favorite movie is one click away.</p>
-
-    {% if not auth_mode %}
-    <div class="auth-actions auth-actions-merge">
-      <button class="btn netflix-btn auth-shift auth-btn-left" data-open-auth="login">Login</button>
-      <button class="btn netflix-btn btn-outline auth-shift auth-btn-right" data-open-auth="register">Register</button>
-    </div>
-    {% endif %}
-
-    {% if auth_mode %}
-    <div class="auth-form-wrap show" id="authFormWrap">
-      <div class="auth-form-card auth-form-card-enter">
-        <h2 class="auth-form-title">{{ 'Register' if auth_mode == 'register' else 'Sign In' }}</h2>
-        {% if auth_mode == 'register' %}
-        <form method="post" action="{{ url_for('register') }}">
-          <div class="mb-3">
-            <label class="form-label">Username</label>
-            <input name="username" class="form-control netflix-input" placeholder="John" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control netflix-input" placeholder="name@email.com">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control netflix-input" placeholder="••••••••" required>
-          </div>
-          <button class="btn netflix-btn w-100">Register</button>
-        </form>
-        <div class="auth-switch-copy">
-          <span>Already have an account?</span>
-          <button type="button" class="btn btn-link auth-card-switch" data-open-auth="login">Login</button>
+<section class="guest-home" data-initial-auth="{{ auth_mode or '' }}">
+  <div class="guest-backdrop guest-click-zone">
+    <div class="guest-overlay"></div>
+    <div class="container guest-content">
+      <div class="guest-brand-block">
+        <h1 class="auth-logo">
+          <img class="auth-logo-icon" src="{{ url_for('static', filename='images/smartrecs-icon.svg') }}" alt="" width="64" height="64">
+          SmartRecs
+        </h1>
+        <p class="auth-tagline auth-tagline-swoop">Your next favorite movie is one click away.</p>
+        <div class="auth-actions auth-actions-merge">
+          <button type="button" class="btn netflix-btn guest-auth-btn auth-btn-left" data-open-auth="login">Login</button>
+          <button type="button" class="btn netflix-btn btn-outline guest-auth-btn auth-btn-right" data-open-auth="register">Sign Up</button>
         </div>
-        {% else %}
-        <form method="post" action="{{ url_for('login') }}">
-          <div class="mb-3">
-            <label class="form-label">Username or Email</label>
-            <input name="identity" class="form-control netflix-input" placeholder="John or name@email.com" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control netflix-input" placeholder="••••••••" required>
-          </div>
-          <button class="btn netflix-btn w-100">Login</button>
-        </form>
-        <div class="auth-switch-copy">
-          <span>Don’t have an account?</span>
-          <button type="button" class="btn btn-link auth-card-switch" data-open-auth="register">Register</button>
+      </div>
+
+      <div class="guest-preview">
+        <h2 class="row-title">Tonight's Picks</h2>
+        <div class="movie-row guest-movie-row">
+          {% for movie in featured_movies %}
+          <button type="button" class="movie-card guest-movie-card" data-open-auth="login" aria-label="Open login to view {{ movie.clean_title }}">
+            <img src="{{ movie.poster_url }}" alt="{{ movie.clean_title }} poster" class="movie-poster" loading="lazy" decoding="async">
+            <span class="movie-info">
+              <span class="guest-movie-title">{{ movie.clean_title }}</span>
+              <span class="guest-movie-meta">{{ movie.pretty_genres }}</span>
+            </span>
+          </button>
+          {% endfor %}
         </div>
-        {% endif %}
       </div>
     </div>
-    {% endif %}
+  </div>
+
+  <div class="guest-auth-layer" aria-hidden="true">
+    <div class="guest-auth-backdrop" data-close-auth></div>
+    <div class="auth-form-wrap guest-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <div class="auth-form-card auth-form-card-enter">
+        <button type="button" class="auth-close-btn" data-close-auth aria-label="Close authentication popup">
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="auth-panel" data-auth-panel="login">
+          <h2 class="auth-form-title" id="authModalTitle">Sign In</h2>
+          <form method="post" action="{{ url_for('login') }}">
+            <div class="mb-3">
+              <label class="form-label">Username or Email</label>
+              <input name="identity" class="form-control netflix-input" placeholder="John or name@email.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control netflix-input" placeholder="Password" required>
+            </div>
+            <button class="btn netflix-btn w-100">Login</button>
+          </form>
+          <div class="auth-switch-copy">
+            <span>Don't have an account?</span>
+            <button type="button" class="btn btn-link auth-card-switch" data-open-auth="register">Sign Up</button>
+          </div>
+        </div>
+
+        <div class="auth-panel" data-auth-panel="register">
+          <h2 class="auth-form-title">Create Account</h2>
+          <form method="post" action="{{ url_for('register') }}">
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input name="username" class="form-control netflix-input" placeholder="John" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control netflix-input" placeholder="name@email.com">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-control netflix-input" placeholder="At least 8 characters" required>
+            </div>
+            <button class="btn netflix-btn w-100">Sign Up</button>
+          </form>
+          <div class="auth-switch-copy">
+            <span>Already have an account?</span>
+            <button type="button" class="btn btn-link auth-card-switch" data-open-auth="login">Login</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
+  const guestHome = document.querySelector('.guest-home');
+  const authLayer = document.querySelector('.guest-auth-layer');
+  const panels = document.querySelectorAll('[data-auth-panel]');
+  const firstLoginInput = document.querySelector('[data-auth-panel="login"] input');
+  const firstRegisterInput = document.querySelector('[data-auth-panel="register"] input');
+
+  function setAuthMode(mode) {
+    const nextMode = mode === 'register' ? 'register' : 'login';
+    panels.forEach((panel) => {
+      panel.classList.toggle('is-active', panel.dataset.authPanel === nextMode);
+    });
+    guestHome?.classList.add('is-auth-open');
+    authLayer?.setAttribute('aria-hidden', 'false');
+    window.history.replaceState({}, '', `/?mode=${nextMode}`);
+    setTimeout(() => {
+      if (nextMode === 'register') {
+        firstRegisterInput?.focus();
+      } else {
+        firstLoginInput?.focus();
+      }
+    }, 80);
+  }
+
+  function closeAuth() {
+    guestHome?.classList.remove('is-auth-open');
+    authLayer?.setAttribute('aria-hidden', 'true');
+    window.history.replaceState({}, '', '/');
+  }
+
   document.querySelectorAll('[data-open-auth]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const mode = button.getAttribute('data-open-auth');
-      document.querySelector('.auth-content')?.classList.add('auth-leave');
-      setTimeout(() => {
-        window.location.href = mode === 'login' ? '{{ url_for('login') }}?mode=login' : '{{ url_for('register') }}?mode=register';
-      }, 10);
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setAuthMode(button.getAttribute('data-open-auth'));
     });
   });
 
+  document.querySelector('.guest-click-zone')?.addEventListener('click', (event) => {
+    if (event.target.closest('[data-open-auth]')) return;
+    setAuthMode('login');
+  });
+
+  document.querySelectorAll('[data-close-auth]').forEach((button) => {
+    button.addEventListener('click', closeAuth);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && guestHome?.classList.contains('is-auth-open')) {
+      closeAuth();
+    }
+  });
 
   document.querySelectorAll('.auth-form-card form').forEach((form) => {
     form.addEventListener('submit', () => {
@@ -85,5 +150,9 @@
     });
   });
 
+  const initialMode = guestHome?.dataset.initialAuth;
+  if (initialMode) {
+    setAuthMode(initialMode);
+  }
 </script>
 {% endblock %}

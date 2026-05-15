@@ -422,6 +422,238 @@ body.page-leave { opacity: .25; transform: translateY(6px); }
   text-decoration: underline;
 }
 
+.guest-home {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #090a0f;
+}
+
+.guest-backdrop {
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(0,0,0,.56), rgba(0,0,0,.9)), url('/static/images/hero-bg.jpg');
+  background-position: center;
+  background-size: cover;
+  transition: filter .28s ease, transform .28s ease;
+}
+
+.guest-home.is-auth-open .guest-backdrop {
+  filter: blur(9px);
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+.guest-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(9,10,15,.15), rgba(9,10,15,.88)),
+    radial-gradient(circle at 30% 16%, rgba(229,9,20,.24), transparent 30%),
+    radial-gradient(circle at 80% 8%, rgba(177,92,255,.18), transparent 32%);
+}
+
+.guest-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.guest-brand-block {
+  max-width: 780px;
+  text-align: left;
+}
+
+.guest-brand-block .auth-logo {
+  justify-content: flex-start;
+  font-size: clamp(3rem, 8vw, 6.8rem);
+  margin-bottom: .85rem;
+}
+
+.guest-brand-block .auth-logo-icon {
+  width: clamp(52px, 8vw, 78px);
+  height: clamp(52px, 8vw, 78px);
+}
+
+.guest-brand-block .auth-tagline {
+  max-width: 620px;
+  margin-bottom: 2rem;
+  color: #f3f4f8;
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+}
+
+.guest-auth-btn {
+  min-width: 170px;
+  padding: 1rem 1.7rem;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  letter-spacing: .2px;
+  box-shadow: 0 14px 30px rgba(0,0,0,.34);
+}
+
+.guest-brand-block .auth-actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.guest-auth-btn.btn-outline {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.68);
+}
+
+.guest-preview {
+  width: 100%;
+}
+
+.guest-preview .row-title {
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0,0,0,.55);
+}
+
+.guest-movie-row {
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+}
+
+.guest-movie-card {
+  padding: 0;
+  border: 1px solid rgba(255,255,255,.12);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 18px 34px rgba(0,0,0,.28);
+}
+
+.guest-movie-card:focus-visible {
+  outline: 3px solid rgba(255,255,255,.86);
+  outline-offset: 3px;
+}
+
+.guest-movie-card .movie-poster {
+  height: 245px;
+}
+
+.guest-movie-card .movie-info {
+  min-height: 118px;
+}
+
+.guest-movie-title {
+  display: block;
+  color: #fff;
+  font-weight: 800;
+  line-height: 1.22;
+}
+
+.guest-movie-meta {
+  display: block;
+  color: #bfc6d4;
+  margin-top: .45rem;
+  font-size: .93rem;
+}
+
+.guest-auth-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+
+.guest-auth-layer[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.guest-auth-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3,4,8,.46);
+}
+
+.guest-auth-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 94vw);
+}
+
+.guest-auth-dialog .auth-form-card {
+  width: 100%;
+  position: relative;
+  background: rgba(13,15,22,.9);
+  border-radius: 8px;
+  box-shadow: 0 26px 60px rgba(0,0,0,.55);
+}
+
+.auth-close-btn {
+  position: absolute;
+  top: .85rem;
+  right: .85rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: rgba(255,255,255,.1);
+}
+
+.auth-close-btn:hover {
+  background: rgba(229,9,20,.8);
+}
+
+.auth-panel {
+  display: none;
+}
+
+.auth-panel.is-active {
+  display: block;
+}
+
+.auth-panel .auth-form-title {
+  padding-right: 2.2rem;
+}
+
+@media (max-width: 576px) {
+  .guest-content {
+    justify-content: flex-start;
+    gap: 2rem;
+    padding-top: 3rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .guest-brand-block,
+  .guest-preview .row-title {
+    text-align: center;
+  }
+
+  .guest-brand-block .auth-logo {
+    justify-content: center;
+  }
+
+  .guest-brand-block .auth-actions {
+    justify-content: center;
+  }
+
+  .guest-auth-btn {
+    width: min(100%, 260px);
+  }
+
+  .guest-movie-card .movie-poster {
+    height: 190px !important;
+  }
+}
+
 .movie-description {
   text-align: left;
   line-height: 1.6;

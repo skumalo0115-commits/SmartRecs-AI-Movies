@@ -97,7 +97,7 @@
     });
 
 
-    const revealTargets = document.querySelectorAll('.movie-card, .nf-stat, .profile-card, .auth-form-card, .social-pill, .row-title, .hero-content-wrap > *');
+    const revealTargets = document.querySelectorAll('.movie-card, .nf-stat, .profile-card, .social-pill, .row-title, .hero-content-wrap > *');
     revealTargets.forEach((el) => el.classList.add('reveal-item'));
 
     const observer = new IntersectionObserver((entries) => {
